@@ -6,7 +6,25 @@
 </head>
 <body>
 <nav>
-    <h2>TO DO LIST</h2>
+    <h2 style="margin: 7px 2px">TO DO LIST</h2>
+    {% if user.is_authenticated %}
+        <h3 style="margin: 7px 2px">Welcome {{ user.username }}</h3>
+
+        <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <form action="{% url 'login' %}" method="POST" style="margin-bottom: 10px">
+        {% csrf_token %}
+        <button type="submit" >Log In</button>
+        </form>
+
+        <form action="{% url 'signup' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Sign Up</button>
+        </form>
+    {% endif %}
 </nav>
 {% block content %}
 
