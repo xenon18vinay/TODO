@@ -7,5 +7,14 @@
         {{ form.as_p }}
     <button type="submit">Submit</button>
     </form>
+    <div>
+    {% for todo in todo_list %}
+        <p>
+            <small style="color: aliceblue; margin-left: 5px; ">{{ todo.created_at }}</small> <br>
+    	    {{ todo.to_do }}
+        </p>
+    {% endfor %}
+
+    </div>
 
 {% endblock %}

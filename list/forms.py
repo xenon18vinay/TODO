@@ -1,4 +1,4 @@
-from .model import ToDoModel
+from .models import ToDoModel
 from django import forms
 
 class ToDoForm(forms.ModelForm):
