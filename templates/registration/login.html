@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form method="POST">
+    <form method="POST" novalidate>
     <h3>Log In</h3>
     {% csrf_token %}
     {{ form.as_p }}
