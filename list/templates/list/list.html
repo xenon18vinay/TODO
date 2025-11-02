@@ -10,8 +10,17 @@
     <div>
     {% for todo in todo_list %}
         <p>
-            <small style="color: aliceblue; margin-left: 5px; ">{{ todo.created_at }}</small> <br>
-    	    {{ todo.to_do }}
+        <form METHOD="POST" action="{% url 'toggle_todo' todo.pk %} ">
+           {% csrf_token %}
+            <label for="todo-{{ todo.pk }}">
+            <div>
+                <input type="checkbox" id="todo-{{ todo.pk }}" name="checker" onchange="this.form.submit()" {% if todo.checker %}checked{% endif %}>
+               <small style="color: aliceblue; margin-left: 5px; ">{{ todo.created_at }}</small> <br>
+    	       {{ todo.to_do }}
+            </div>
+        </label>
+        </form>
+
         </p>
     {% endfor %}
 

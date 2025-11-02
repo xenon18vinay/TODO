@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 
 from .forms import ToDoForm,SignUpForm
 from .models import ToDoModel
@@ -19,7 +21,13 @@ def todo_list(request):
         all_to_do = ToDoModel.objects.all().filter(to_user=request.user).order_by('-created_at')
         to_do_form = ToDoForm()
     return render(request,'list/list.html', context={'form':to_do_form,'todo_list':all_to_do})
-
+@login_required
+@require_POST
+def toggle_todo(request,pk):
+    todo = get_object_or_404(ToDoModel,id=pk,to_user=request.user)
+    todo.checker = not todo.checker
+    todo.save()
+    return redirect('todo_list')
 class SignUpView(CreateView):
      form_class = SignUpForm
      template_name = 'registration/signup.html'
