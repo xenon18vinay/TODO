@@ -4,7 +4,14 @@
     <form method="POST" novalidate>
     <h3>Log In</h3>
     {% csrf_token %}
-    {{ form.as_p }}
+        <p>
+        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {{ form.username }}
+        </p>
+        <p>
+            <label for="{{ form.password.id_for_label }}">Password:</label>
+            {{ form.password }}
+        </p>
     <button type="submit">Log In</button>
     </form>
 {% endblock %}

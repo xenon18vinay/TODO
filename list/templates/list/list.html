@@ -9,6 +9,10 @@
     </form>
     <div>
     {% for todo in todo_list %}
+        {% ifchanged todo.created_at.date%}
+            <h3 style="color: white; margin-top: 20px;">{{ todo.created_at|date:"d M Y" }}</h3>
+        {% endifchanged %}
+
         <p>
         <form METHOD="POST" action="{% url 'toggle_todo' todo.pk %} ">
            {% csrf_token %}
