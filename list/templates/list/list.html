@@ -1,39 +1,52 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<p>This is test subject</p>
-    <form method="POST">
+    <!-- New Task Input Form - Gemini Style -->
+    <form method="POST" class="new-task-form">
         {% csrf_token %}
-        {{ form.as_p }}
-    <button type="submit">Submit</button>
+        {{ form.to_do }}
+        <button type="submit">→</button>
     </form>
-    <div>
-    {% for todo in todo_list %}
-        {% ifchanged todo.created_at.date%}
-            <h3 style="color: white; margin-top: 20px;">{{ todo.created_at|date:"d M Y" }}</h3>
-        {% endifchanged %}
 
-        <p>
-        <form METHOD="POST" action="{% url 'toggle_todo' todo.pk %} ">
-           {% csrf_token %}
-            <label for="todo-{{ todo.pk }}">
-            <div>
-                <input type="checkbox" id="todo-{{ todo.pk }}" name="checker" onchange="this.form.submit()" {% if todo.checker %}checked{% endif %}>
-               <small style="color: aliceblue; margin-left: 5px; ">{{ todo.created_at }}</small> <br>
-    	       {{ todo.to_do }}
+    <!-- Task List -->
+    <div class="task-list">
+        {% for todo in todo_list %}
+            {% ifchanged todo.created_at.date %}
+                <div class="date-header">
+                    {{ todo.created_at|date:"d M Y" }}
+                </div>
+            {% endifchanged %}
+
+            <div class="task-item {% if todo.checker %}checked{% endif %}">
+                <!-- Toggle Checkbox Form -->
+                <form method="POST" action="{% url 'toggle_todo' todo.pk %}" class="toggle-form">
+                    {% csrf_token %}
+                    <label for="todo-{{ todo.pk }}">
+                        <input 
+                            type="checkbox" 
+                            id="todo-{{ todo.pk }}" 
+                            name="checker" 
+                            onchange="this.form.submit()" 
+                            {% if todo.checker %}checked{% endif %}
+                        >
+                        <span class="custom-checkbox"></span>
+                        <div class="task-content">
+                            <span class="task-text">{{ todo.to_do }}</span>
+                            <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
+                        </div>
+                    </label>
+                </form>
+
+                <!-- Delete Form -->
+                <form method="POST" action="{% url 'delete_todo' todo.pk %}" class="delete-form">
+                    {% csrf_token %}
+                    <button type="submit" aria-label="Delete task">&times;</button>
+                </form>
             </div>
-        </label>
-        </form>
-        <form METHOD="POST" action="{% url 'delete_todo' todo.pk %} " >
-        {% csrf_token %}
-            <label for="delete-{{ todo.pk }}">
-                <button class="close-button" id="delete-{{ todo.pk }}" onclick="this.form.submit()">&times;</button>
-            </label>
-        </form>
-
-        </p>
-    {% endfor %}
-
+        {% empty %}
+            <div class="empty-state">
+                <p>No tasks yet. Start by adding one above!</p>
+            </div>
+        {% endfor %}
     </div>
-
 {% endblock %}

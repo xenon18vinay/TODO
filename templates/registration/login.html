@@ -1,17 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form method="POST" novalidate>
-    <h3>Log In</h3>
-    {% csrf_token %}
-        <p>
-        <label for="{{ form.username.id_for_label }}">Username:</label>
-        {{ form.username }}
-        </p>
-        <p>
-            <label for="{{ form.password.id_for_label }}">Password:</label>
-            {{ form.password }}
-        </p>
-    <button type="submit">Log In</button>
-    </form>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2 class="auth-title">Log In</h2>
+            <p class="auth-subtitle">Welcome back to your tasks</p>
+            
+            <form method="POST" class="auth-form" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <span class="form-error">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <span class="form-error">{{ form.password.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-error-box">
+                        {{ form.non_field_errors.0 }}
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="auth-button">Log In</button>
+            </form>
+
+            <p class="auth-footer">
+                Don't have an account? <a href="{% url 'signup' %}" class="auth-link">Sign Up</a>
+            </p>
+        </div>
+    </div>
 {% endblock %}
