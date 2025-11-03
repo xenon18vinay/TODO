@@ -18,7 +18,7 @@ def todo_list(request):
             form.save()
         return redirect('todo_list')
     else:
-        all_to_do = ToDoModel.objects.all().filter(to_user=request.user).order_by('-created_at')
+        all_to_do = ToDoModel.objects.all().filter(to_user=request.user,is_hidden=False).order_by('-created_at')
         to_do_form = ToDoForm()
     return render(request,'list/list.html', context={'form':to_do_form,'todo_list':all_to_do})
 @login_required
@@ -26,6 +26,12 @@ def todo_list(request):
 def toggle_todo(request,pk):
     todo = get_object_or_404(ToDoModel,id=pk,to_user=request.user)
     todo.checker = not todo.checker
+    todo.save()
+    return redirect('todo_list')
+
+def delete_todo(request,pk):
+    todo=get_object_or_404(ToDoModel,id=pk,to_user=request.user)
+    todo.is_hidden = True
     todo.save()
     return redirect('todo_list')
 class SignUpView(CreateView):

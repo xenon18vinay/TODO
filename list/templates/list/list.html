@@ -24,6 +24,12 @@
             </div>
         </label>
         </form>
+        <form METHOD="POST" action="{% url 'delete_todo' todo.pk %} " >
+        {% csrf_token %}
+            <label for="delete-{{ todo.pk }}">
+                <button class="close-button" id="delete-{{ todo.pk }}" onclick="this.form.submit()">&times;</button>
+            </label>
+        </form>
 
         </p>
     {% endfor %}

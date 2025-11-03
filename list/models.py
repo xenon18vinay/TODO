@@ -8,3 +8,4 @@ class ToDoModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     to_user =  models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     checker = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=False)
