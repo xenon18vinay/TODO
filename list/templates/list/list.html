@@ -184,7 +184,7 @@
         const totalSeconds = (hours * 3600) + (minutes * 60);
 
         // Update hidden input for form submission
-        const hiddenInput = document.getElementById('id_todo_time');
+        const hiddenInput = document.getElementById('todoTimeHidden');
         if (hiddenInput) {
             hiddenInput.value = totalSeconds;
         }

@@ -651,29 +651,7 @@ input[name="todo_time"],
     display: none !important;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-    .circular-timer {
-        padding: 6px 10px;
-        gap: 8px;
-    }
 
-    .stopwatch-time {
-        font-size: 0.813rem;
-        min-width: 45px;
-    }
-
-    .timer-control-btn {
-        width: 24px;
-        height: 24px;
-        padding: 5px;
-    }
-
-    .timer-control-btn svg {
-        width: 10px;
-        height: 10px;
-    }
-}
 /* ===== DELETE BUTTON ===== */
 .delete-form {
     flex-shrink: 0;
@@ -843,103 +821,6 @@ input[name="todo_time"],
     text-decoration: underline;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 16px;
-    }
-
-    nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    nav .auth-links {
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    /* Form responsive */
-    .form-main-row {
-        padding: 4px 6px 4px 20px;
-    }
-
-    .new-task-form input[type="text"],
-    .new-task-form .task-input-field {
-        font-size: 0.938rem;
-        padding: 12px 8px;
-    }
-
-    .submit-btn {
-        width: 40px;
-        height: 40px;
-    }
-
-    /* Time picker responsive */
-    .time-picker-controls {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
-
-    .time-input-group {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .quick-select {
-        justify-content: center;
-    }
-
-    .clear-time-btn {
-        width: 100%;
-    }
-
-    /* Circular timer responsive */
-    .circular-timer {
-        width: 70px;
-        height: 70px;
-    }
-
-    .circular-timer .timer-ring {
-        width: 70px;
-        height: 70px;
-    }
-
-    .circular-timer .timer-ring circle {
-        r: 30;
-        cx: 35;
-        cy: 35;
-    }
-
-    .stopwatch-time {
-        font-size: 0.75rem;
-    }
-
-    .timer-control-btn svg {
-        width: 14px;
-        height: 14px;
-    }
-
-    .task-goal {
-        font-size: 0.688rem;
-        padding: 2px 8px;
-    }
-
-    /* Auth pages responsive */
-    .auth-card {
-        padding: 36px 28px;
-    }
-
-    .auth-title {
-        font-size: 1.5rem;
-    }
-
-    .auth-subtitle {
-        font-size: 0.875rem;
-    }
-}
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
@@ -959,4 +840,413 @@ input[name="todo_time"],
 
 .auth-card {
     animation: fadeIn 0.4s ease;
+}
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    main {
+        max-width: 100%;
+    }
+
+    /* Navigation */
+    nav {
+        flex-direction: row;
+        padding: 16px 0;
+        margin-bottom: 32px;
+    }
+
+    nav .brand {
+        font-size: 1rem;
+    }
+
+    nav .auth-links {
+        gap: 10px;
+    }
+
+    nav .auth-links span {
+        display: none;
+    }
+
+    nav button,
+    .auth-links a {
+        padding: 6px 12px;
+        font-size: 0.813rem;
+    }
+
+    /* Form responsive */
+    .new-task-form {
+        border-radius: 24px;
+        margin-bottom: 32px;
+    }
+
+    .form-main-row {
+        padding: 4px 4px 4px 16px;
+        gap: 6px;
+    }
+
+    .new-task-form input[type="text"],
+    .new-task-form .task-input-field {
+        font-size: 0.938rem;
+        padding: 10px 6px;
+    }
+
+    .time-toggle-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        gap: 4px;
+    }
+
+    .time-icon {
+        font-size: 0.875rem;
+    }
+
+    .submit-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1.125rem;
+    }
+
+    /* Time picker responsive */
+    .time-picker-dropdown {
+        padding: 16px;
+    }
+
+    .time-picker-label {
+        font-size: 0.75rem;
+        margin-bottom: 10px;
+    }
+
+    .time-picker-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .time-input-group {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .time-input {
+        width: 65px;
+        padding: 8px 10px;
+        font-size: 1rem;
+    }
+
+    .time-separator {
+        font-size: 1.25rem;
+        margin-top: 16px;
+    }
+
+    .quick-select {
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .quick-select-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .clear-time-btn {
+        width: 100%;
+        padding: 8px 12px;
+    }
+
+    /* Task list */
+    .task-list {
+        margin-top: 24px;
+    }
+
+    .date-header {
+        font-size: 0.75rem;
+        padding: 12px 0 8px 0;
+        margin-top: 24px;
+    }
+
+    /* Task items - keep horizontal layout */
+    .task-item {
+        padding: 12px 0;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    .toggle-form {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .circular-timer-container {
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    /* Checkbox */
+    .custom-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+
+    .toggle-form input[type="checkbox"]:checked + .custom-checkbox::after {
+        font-size: 11px;
+    }
+
+    .toggle-form label {
+        gap: 8px;
+    }
+
+    /* Task content */
+    .task-text {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    .task-meta {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .task-time {
+        font-size: 0.75rem;
+    }
+
+    .task-goal {
+        font-size: 0.688rem;
+        padding: 2px 8px;
+    }
+
+    /* Timer - make it more compact */
+    .circular-timer {
+        padding: 6px 8px;
+        gap: 6px;
+        border-radius: 10px;
+    }
+
+    .stopwatch-time {
+        font-size: 0.75rem;
+        min-width: 40px;
+    }
+
+    .timer-control-btn {
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+    }
+
+    .timer-control-btn svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    /* Delete button */
+    .delete-form button {
+        width: 28px;
+        height: 28px;
+        font-size: 1.25rem;
+    }
+
+    /* Auth pages responsive */
+    .auth-container {
+        min-height: calc(100vh - 150px);
+        padding: 24px 12px;
+    }
+
+    .auth-card {
+        padding: 32px 24px;
+        border-radius: 12px;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
+
+    .auth-subtitle {
+        font-size: 0.875rem;
+        margin-bottom: 24px;
+    }
+
+    .auth-form {
+        gap: 20px;
+    }
+
+    .form-label {
+        font-size: 0.813rem;
+    }
+
+    .auth-form input[type="text"],
+    .auth-form input[type="password"] {
+        padding: 10px 14px;
+        font-size: 0.875rem;
+    }
+
+    .auth-button {
+        padding: 12px 20px;
+        font-size: 0.875rem;
+    }
+
+    .auth-footer {
+        font-size: 0.813rem;
+        margin-top: 20px;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 40px 16px;
+    }
+
+    .empty-state p {
+        font-size: 0.875rem;
+    }
+}
+
+/* Extra small devices (phones in portrait, less than 576px) */
+@media (max-width: 575px) {
+    .container {
+        padding: 0 8px;
+    }
+
+    /* Navigation for very small screens */
+    nav {
+        padding: 12px 0;
+        margin-bottom: 24px;
+    }
+
+    nav .brand {
+        font-size: 0.938rem;
+    }
+
+    nav button,
+    .auth-links a {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        border-radius: 16px;
+    }
+
+    /* Form for very small screens */
+    .new-task-form {
+        border-radius: 20px;
+        margin-bottom: 24px;
+    }
+
+    .form-main-row {
+        padding: 3px 3px 3px 12px;
+        gap: 4px;
+    }
+
+    .new-task-form input[type="text"],
+    .new-task-form .task-input-field {
+        font-size: 0.875rem;
+        padding: 8px 4px;
+    }
+
+    .time-toggle-btn {
+        padding: 5px 8px;
+        font-size: 0.688rem;
+        gap: 3px;
+    }
+
+    .time-icon {
+        font-size: 0.813rem;
+    }
+
+    .submit-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    /* Time picker for very small screens */
+    .time-picker-dropdown {
+        padding: 12px;
+    }
+
+    .time-input {
+        width: 60px;
+        padding: 6px 8px;
+        font-size: 0.938rem;
+    }
+
+    .time-input-label {
+        font-size: 0.688rem;
+    }
+
+    .time-separator {
+        font-size: 1.125rem;
+    }
+
+    .quick-select-btn {
+        padding: 4px 8px;
+        font-size: 0.688rem;
+    }
+
+    /* Task items for very small screens - keep horizontal */
+    .task-item {
+        padding: 10px 0;
+        gap: 4px;
+    }
+
+    .toggle-form label {
+        gap: 6px;
+    }
+
+    .task-text {
+        font-size: 0.813rem;
+    }
+
+    .task-time {
+        font-size: 0.688rem;
+    }
+
+    .task-goal {
+        font-size: 0.625rem;
+        padding: 2px 6px;
+    }
+
+    /* Timer for very small screens */
+    .circular-timer {
+        padding: 5px 6px;
+        gap: 4px;
+        border-radius: 8px;
+    }
+
+    .stopwatch-time {
+        font-size: 0.688rem;
+        min-width: 36px;
+    }
+
+    .timer-control-btn {
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+    }
+
+    .timer-control-btn svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Delete button for very small screens */
+    .delete-form button {
+        width: 26px;
+        height: 26px;
+        font-size: 1.125rem;
+    }
+
+    /* Auth pages for very small screens */
+    .auth-card {
+        padding: 24px 16px;
+    }
+
+    .auth-title {
+        font-size: 1.375rem;
+    }
+
+    .auth-subtitle {
+        font-size: 0.813rem;
+    }
 }

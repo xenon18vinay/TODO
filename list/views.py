@@ -11,19 +11,22 @@ from django.views.generic import CreateView
 
 @login_required
 def todo_list(request):
+    form = ToDoForm(request.POST)
     if request.method == "POST":
-        form = ToDoForm(request.POST)
         if form.is_valid():
             temp = form.save(commit=False)
-            todo_time_seconds = int(request.POST.get('todo_time', 0))
+            todo_time_seconds = int(request.POST.get('todo_time', 0))  # You should get this from cleaned_data
             temp.todo_time = timedelta(seconds=todo_time_seconds)
+            temp.to_user = request.user
             temp.to_user = request.user
             temp.save()
         return redirect('todo_list')
-    else:
-        all_to_do = ToDoModel.objects.filter(to_user=request.user, is_hidden=False).order_by('-created_at')
-        to_do_form = ToDoForm()
-    return render(request, 'list/list.html', context={'form': to_do_form, 'todo_list': all_to_do})
+    all_to_do = ToDoModel.objects.filter(to_user=request.user, is_hidden=False).order_by('-created_at')
+    to_do_form = ToDoForm()
+    return render(request, 'list/list.html', context={
+        'form': to_do_form,
+        'todo_list': all_to_do
+    })
 
 
 @login_required
