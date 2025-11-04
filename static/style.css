@@ -492,3 +492,136 @@ main {
 .auth-card {
     animation: fadeIn 0.4s ease;
 }
+/* Add these styles to your existing style.css */
+
+/* Timer Container */
+.timer-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* Timer Display */
+.timer-display {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+    min-width: 60px;
+    text-align: right;
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    transition: all 0.2s ease;
+}
+
+/* Timer is running */
+.timer-display.active {
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+/* Start Button */
+.start-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.813rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.start-btn:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.start-btn:active {
+    transform: scale(0.96);
+}
+
+/* Stop Button */
+.stop-btn {
+    background: var(--accent-blue);
+    border: 1px solid var(--accent-blue);
+    color: var(--bg-primary);
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 0.813rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.stop-btn:hover {
+    background-color: var(--accent-blue-hover);
+    border-color: var(--accent-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(138, 180, 248, 0.3);
+}
+
+.stop-btn:active {
+    transform: translateY(0);
+}
+
+/* Pulsing animation for active timer */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.timer-display.active {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Task Item with timer running */
+.task-item.timer-active {
+    background-color: rgba(138, 180, 248, 0.03);
+}
+
+.task-item.timer-active:hover {
+    background-color: rgba(138, 180, 248, 0.05);
+}
+
+/* Hide time forms */
+.time-form {
+    display: none !important;
+}
+
+/* Responsive Design for Timer */
+@media (max-width: 768px) {
+    .timer-display {
+        font-size: 0.813rem;
+        min-width: 52px;
+    }
+
+    .start-btn,
+    .stop-btn {
+        padding: 5px 12px;
+        font-size: 0.75rem;
+    }
+
+    .timer-container {
+        gap: 6px;
+    }
+}
+
+/* Optional: Add a subtle background when timer is running */
+.task-item.timer-active {
+    background-color: rgba(138, 180, 248, 0.03);
+}
+
+.task-item.timer-active:hover {
+    background-color: rgba(138, 180, 248, 0.05);
+}

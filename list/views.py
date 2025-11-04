@@ -3,7 +3,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-
+from datetime import timedelta
 from .forms import ToDoForm,SignUpForm
 from .models import ToDoModel
 from django.views.generic import CreateView
@@ -26,6 +26,14 @@ def todo_list(request):
 def toggle_todo(request,pk):
     todo = get_object_or_404(ToDoModel,id=pk,to_user=request.user)
     todo.checker = not todo.checker
+    todo.save()
+    return redirect('todo_list')
+
+def timer(request,pk):
+    todo = get_object_or_404(ToDoModel,id=pk,to_user=request.user)
+    seconds_str = request.POST.get('duration_in_seconds')
+    new_duration=timedelta(seconds=int(seconds_str))
+    todo.timer = todo.timer+ new_duration
     todo.save()
     return redirect('todo_list')
 

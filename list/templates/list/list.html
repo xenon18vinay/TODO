@@ -8,7 +8,7 @@
         <button type="submit">→</button>
     </form>
 
-    <!-- Task List -->
+
     <div class="task-list">
         {% for todo in todo_list %}
             {% ifchanged todo.created_at.date %}
@@ -22,11 +22,11 @@
                 <form method="POST" action="{% url 'toggle_todo' todo.pk %}" class="toggle-form">
                     {% csrf_token %}
                     <label for="todo-{{ todo.pk }}">
-                        <input 
-                            type="checkbox" 
-                            id="todo-{{ todo.pk }}" 
-                            name="checker" 
-                            onchange="this.form.submit()" 
+                        <input
+                            type="checkbox"
+                            id="todo-{{ todo.pk }}"
+                            name="checker"
+                            onchange="this.form.submit()"
                             {% if todo.checker %}checked{% endif %}
                         >
                         <span class="custom-checkbox"></span>
@@ -35,6 +35,19 @@
                             <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
                         </div>
                     </label>
+                </form>
+
+                <!-- Timer Container -->
+                <div class="timer-container">
+                    <span class="timer-display" id="timer-display-{{ todo.pk }}">{{ todo.timer|slice:":8" }}</span>
+                    <button class="start-btn" data-task-id="{{ todo.pk }}">Start</button>
+                    <button type="submit" class="stop-btn" data-task-id="{{ todo.pk }}" style="display:none;" form="time-form-{{ todo.pk }}">Stop</button>
+                </div>
+
+                <!-- Hidden Time Form -->
+                <form id="time-form-{{ todo.pk }}" class="time-form" method="POST" action="{% url 'time_spend' todo.pk %}" style="display: none;">
+                    {% csrf_token %}
+                    <input type="hidden" name="duration_in_seconds" class="duration-input">
                 </form>
 
                 <!-- Delete Form -->
@@ -49,4 +62,114 @@
             </div>
         {% endfor %}
     </div>
+
+<script>
+    // We will only allow one timer to run at a time.
+    let activeTimer = {
+        intervalId: null,
+        startTime: null,
+        taskId: null,
+        timerElement: null,
+        originalTime: 0
+    };
+
+    function updateTimer() {
+        const now = new Date();
+        const elapsedMilliseconds = now - activeTimer.startTime;
+        const totalMilliseconds = activeTimer.originalTime + elapsedMilliseconds;
+        const totalSeconds = Math.floor(totalMilliseconds / 1000);
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        let formattedTime =
+            String(minutes).padStart(2, '0') + ':' +
+            String(seconds).padStart(2, '0');
+
+        if (hours > 0) {
+            formattedTime = String(hours).padStart(2, '0') + ':' + formattedTime;
+        }
+
+        activeTimer.timerElement.textContent = formattedTime;
+    }
+
+    function parseDuration(durationStr) {
+        if (!durationStr || durationStr === "0:00:00") return 0;
+        const parts = durationStr.split(':').map(Number);
+        let milliseconds = 0;
+        if (parts.length === 3) {
+            milliseconds += parts[0] * 3600000;
+            milliseconds += parts[1] * 60000;
+            milliseconds += parts[2] * 1000;
+        } else if (parts.length === 2) {
+            milliseconds += parts[0] * 60000;
+            milliseconds += parts[1] * 1000;
+        }
+        return milliseconds;
+    }
+
+    document.addEventListener('click', function(e) {
+        // START BUTTON
+        if (e.target.matches('.start-btn')) {
+            e.preventDefault();
+
+            if (activeTimer.intervalId) {
+                alert('Please stop the active timer first!');
+                return;
+            }
+
+            const button = e.target;
+            const taskId = button.dataset.taskId;
+            const taskItem = button.closest('.task-item');
+            const timerDisplay = taskItem.querySelector('.timer-display');
+            const stopButton = taskItem.querySelector('.stop-btn');
+
+            activeTimer.taskId = taskId;
+            activeTimer.startTime = new Date();
+            activeTimer.timerElement = timerDisplay;
+            activeTimer.originalTime = parseDuration(timerDisplay.textContent);
+
+            activeTimer.intervalId = setInterval(updateTimer, 1000);
+
+            button.style.display = 'none';
+            stopButton.style.display = 'inline-block';
+            timerDisplay.classList.add('active');
+            taskItem.classList.add('timer-active');
+        }
+
+        // STOP BUTTON
+        if (e.target.matches('.stop-btn')) {
+            e.preventDefault();
+
+            const stopButton = e.target;
+            const taskItem = stopButton.closest('.task-item');
+            const startButton = taskItem.querySelector('.start-btn');
+            const timerDisplay = taskItem.querySelector('.timer-display');
+
+            clearInterval(activeTimer.intervalId);
+
+            const now = new Date();
+            const elapsedMilliseconds = now - activeTimer.startTime;
+            const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+            const form = document.getElementById('time-form-' + activeTimer.taskId);
+            const input = form.querySelector('.duration-input');
+            input.value = elapsedSeconds > 0 ? elapsedSeconds : 0;
+
+            stopButton.style.display = 'none';
+            startButton.style.display = 'inline-block';
+            timerDisplay.classList.remove('active');
+            taskItem.classList.remove('timer-active');
+
+            activeTimer.intervalId = null;
+            activeTimer.startTime = null;
+            activeTimer.taskId = null;
+            activeTimer.timerElement = null;
+            activeTimer.originalTime = 0;
+
+            form.submit();
+        }
+    });
+</script>
 {% endblock %}
