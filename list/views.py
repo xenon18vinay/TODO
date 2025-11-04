@@ -8,29 +8,78 @@ from .forms import ToDoForm, SignUpForm
 from .models import ToDoModel
 from django.views.generic import CreateView
 
+# views.py (inside todo_list)
+from datetime import timedelta
+import re
+
+def _parse_todo_time_to_seconds(value):
+    """
+    Accepts:
+      - integer seconds as string or int -> returns int seconds
+      - "HH:MM:SS" or "MM:SS" -> returns seconds
+      - "0:00:00" -> returns 0
+      - None/invalid -> returns 0
+    """
+    if value is None:
+        return 0
+
+    # If it's already a timedelta
+    if isinstance(value, timedelta):
+        return int(value.total_seconds())
+
+    s = str(value).strip()
+
+    # Empty
+    if s == "" or s in {"0", "0:00", "0:00:00"}:
+        return 0
+
+    # If purely numeric (seconds)
+    if re.fullmatch(r"-?\d+", s):
+        try:
+            return max(0, int(s))
+        except ValueError:
+            return 0
+
+    # Pattern HH:MM:SS or MM:SS
+    if ":" in s:
+        parts = s.split(":")
+        try:
+            parts = [int(p) for p in parts]
+        except ValueError:
+            return 0
+
+        if len(parts) == 3:
+            hours, minutes, seconds = parts
+        elif len(parts) == 2:
+            hours = 0
+            minutes, seconds = parts
+        else:
+            # unexpected number of fields, bail safely
+            return 0
+
+        if hours < 0 or minutes < 0 or seconds < 0:
+            return 0
+
+        return hours * 3600 + minutes * 60 + seconds
+
+    # Fall back
+    try:
+        return int(float(s))
+    except Exception:
+        return 0
 
 @login_required
 def todo_list(request):
-    form = ToDoForm(request.POST)
+    form = ToDoForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             temp = form.save(commit=False)
 
-            # Fix: Handle the todo_time properly
-            todo_time_value = request.POST.get('todo_time', '0')
+            # Robustly parse various todo_time formats:
+            todo_time_value = request.POST.get('todo_time') or request.POST.get('todo_time_hidden') or request.POST.get('todo_time_field') or form.cleaned_data.get('todo_time')
+            seconds = _parse_todo_time_to_seconds(todo_time_value)
 
-            # Convert to integer, handling various formats
-            try:
-                if ':' in str(todo_time_value):
-                    # If it's in time format like '00:00:00', set to 0
-                    todo_time_seconds = 0
-                else:
-                    # Otherwise convert to int
-                    todo_time_seconds = int(todo_time_value)
-            except (ValueError, AttributeError):
-                todo_time_seconds = 0
-
-            temp.todo_time = timedelta(seconds=todo_time_seconds)
+            temp.todo_time = timedelta(seconds=seconds)
             temp.to_user = request.user
             temp.save()
         return redirect('todo_list')
