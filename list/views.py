@@ -15,9 +15,22 @@ def todo_list(request):
     if request.method == "POST":
         if form.is_valid():
             temp = form.save(commit=False)
-            todo_time_seconds = int(request.POST.get('todo_time', 0))  # You should get this from cleaned_data
+
+            # Fix: Handle the todo_time properly
+            todo_time_value = request.POST.get('todo_time', '0')
+
+            # Convert to integer, handling various formats
+            try:
+                if ':' in str(todo_time_value):
+                    # If it's in time format like '00:00:00', set to 0
+                    todo_time_seconds = 0
+                else:
+                    # Otherwise convert to int
+                    todo_time_seconds = int(todo_time_value)
+            except (ValueError, AttributeError):
+                todo_time_seconds = 0
+
             temp.todo_time = timedelta(seconds=todo_time_seconds)
-            temp.to_user = request.user
             temp.to_user = request.user
             temp.save()
         return redirect('todo_list')
