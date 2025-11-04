@@ -1,11 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- New Task Input Form - Gemini Style -->
+    <!-- New Task Input Form - Enhanced Gemini Style with Time Picker -->
     <form method="POST" class="new-task-form">
         {% csrf_token %}
-        {{ form.to_do }}
-        <button type="submit">→</button>
+        <div class="form-main-row">
+            {{ form.to_do }}
+            
+            <button type="button" class="time-toggle-btn" onclick="toggleTimePicker()">
+                <span class="time-icon">⏱️</span>
+                <span class="time-text">Set time</span>
+            </button>
+            
+            <button type="submit" class="submit-btn">→</button>
+        </div>
+
+        <div class="time-picker-dropdown" id="timePickerDropdown">
+            <label class="time-picker-label">Estimated time to complete</label>
+            
+            <div class="time-picker-controls">
+                <div class="time-input-group">
+                    <div class="time-input-wrapper">
+                        <span class="time-input-label">Hours</span>
+                        <input 
+                            type="number" 
+                            class="time-input" 
+                            id="hours" 
+                            min="0" 
+                            max="99" 
+                            value="0"
+                            onchange="updateTimeDisplay()"
+                        >
+                    </div>
+                    
+                    <span class="time-separator">:</span>
+                    
+                    <div class="time-input-wrapper">
+                        <span class="time-input-label">Minutes</span>
+                        <input 
+                            type="number" 
+                            class="time-input" 
+                            id="minutes" 
+                            min="0" 
+                            max="59" 
+                            value="0"
+                            onchange="updateTimeDisplay()"
+                        >
+                    </div>
+                </div>
+
+                <button type="button" class="clear-time-btn" onclick="clearTime()">
+                    Clear
+                </button>
+            </div>
+
+            <div class="quick-select">
+                <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 15)">15 min</button>
+                <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 30)">30 min</button>
+                <button type="button" class="quick-select-btn" onclick="setQuickTime(1, 0)">1 hour</button>
+                <button type="button" class="quick-select-btn" onclick="setQuickTime(2, 0)">2 hours</button>
+                <button type="button" class="quick-select-btn" onclick="setQuickTime(4, 0)">4 hours</button>
+            </div>
+        </div>
+
+        <!-- Hidden input for Django form submission -->
+        {{ form.todo_time }}
     </form>
 
 
@@ -17,7 +76,7 @@
                 </div>
             {% endifchanged %}
 
-            <div class="task-item {% if todo.checker %}checked{% endif %}">
+            <div class="task-item {% if todo.checker %}checked{% endif %}" data-task-id="{{ todo.pk }}">
                 <!-- Toggle Checkbox Form -->
                 <form method="POST" action="{% url 'toggle_todo' todo.pk %}" class="toggle-form">
                     {% csrf_token %}
@@ -32,16 +91,37 @@
                         <span class="custom-checkbox"></span>
                         <div class="task-content">
                             <span class="task-text">{{ todo.to_do }}</span>
-                            <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
+                            <div class="task-meta">
+                                <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
+                                {% if todo.todo_time.total_seconds > 0 %}
+                                    <span class="task-goal">Goal: <span id="goal-time-{{ todo.pk }}" data-seconds="{{ todo.todo_time.total_seconds }}">{{ todo.todo_time|slice:":8" }}</span></span>
+                                {% endif %}
+                            </div>
                         </div>
                     </label>
                 </form>
 
-                <!-- Timer Container -->
-                <div class="timer-container">
-                    <span class="timer-display" id="timer-display-{{ todo.pk }}">{{ todo.timer|slice:":8" }}</span>
-                    <button class="start-btn" data-task-id="{{ todo.pk }}">Start</button>
-                    <button type="submit" class="stop-btn" data-task-id="{{ todo.pk }}" style="display:none;" form="time-form-{{ todo.pk }}">Stop</button>
+                <!-- Circular Timer Container -->
+                <div class="circular-timer-container">
+                    <div class="circular-timer" data-task-id="{{ todo.pk }}">
+                        <label for="stopwatch-{{ todo.pk }}">
+                        <div class="timer-content">
+                            <span class="stopwatch-time" id="stopwatch-{{ todo.pk }}" data-seconds="{{ todo.timer.total_seconds }}">
+                                {{ todo.timer|slice:":8" }}
+                            </span>
+                            <button class="timer-control-btn start-btn" data-task-id="{{ todo.pk }}" title="Start timer">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            </button>
+                            <button class="timer-control-btn stop-btn" data-task-id="{{ todo.pk }}" style="display:none;" title="Stop timer" form="time-form-{{ todo.pk }}">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                </svg>
+                            </button>
+                        </div></label>
+                    </div>
                 </div>
 
                 <!-- Hidden Time Form -->
@@ -64,38 +144,143 @@
     </div>
 
 <script>
-    // We will only allow one timer to run at a time.
+    // Time Picker Functionality
+    let isTimePickerActive = false;
+
+    function toggleTimePicker() {
+        const dropdown = document.getElementById('timePickerDropdown');
+        const button = document.querySelector('.time-toggle-btn');
+
+        isTimePickerActive = !isTimePickerActive;
+
+        if (isTimePickerActive) {
+            dropdown.classList.add('active');
+            button.classList.add('active');
+            button.querySelector('.time-text').textContent = 'Hide time';
+        } else {
+            dropdown.classList.remove('active');
+            button.classList.remove('active');
+            button.querySelector('.time-text').textContent = 'Set time';
+        }
+    }
+
+    function setQuickTime(hours, minutes) {
+        document.getElementById('hours').value = hours;
+        document.getElementById('minutes').value = minutes;
+        updateTimeDisplay();
+    }
+
+    function clearTime() {
+        document.getElementById('hours').value = 0;
+        document.getElementById('minutes').value = 0;
+        updateTimeDisplay();
+    }
+
+    function updateTimeDisplay() {
+        const hours = parseInt(document.getElementById('hours').value) || 0;
+        const minutes = parseInt(document.getElementById('minutes').value) || 0;
+
+        // Calculate total seconds
+        const totalSeconds = (hours * 3600) + (minutes * 60);
+
+        // Update hidden input for form submission
+        const hiddenInput = document.getElementById('id_todo_time');
+        if (hiddenInput) {
+            hiddenInput.value = totalSeconds;
+        }
+
+        // Update button text to show selected time
+        const button = document.querySelector('.time-toggle-btn');
+        const timeText = button.querySelector('.time-text');
+
+        if (totalSeconds > 0) {
+            let displayText = '';
+            if (hours > 0) displayText += `${hours}h `;
+            if (minutes > 0) displayText += `${minutes}m`;
+            timeText.textContent = displayText.trim();
+        } else {
+            timeText.textContent = isTimePickerActive ? 'Hide time' : 'Set time';
+        }
+    }
+
+    // Initialize time display on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTimeDisplay();
+        formatAllTimers();
+    });
+
+    // Format timer display to hide hours if zero
+    function formatAllTimers() {
+        document.querySelectorAll('.stopwatch-time').forEach(timer => {
+            const seconds = parseInt(timer.dataset.seconds) || 0;
+            timer.textContent = formatTime(seconds);
+        });
+
+        document.querySelectorAll('[id^="goal-time-"]').forEach(goal => {
+            const seconds = parseInt(goal.dataset.seconds) || 0;
+            goal.textContent = formatTime(seconds);
+        });
+    }
+
+    function formatTime(totalSeconds) {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        if (hours > 0) {
+            return String(hours).padStart(2, '0') + ':' +
+                   String(minutes).padStart(2, '0') + ':' +
+                   String(seconds).padStart(2, '0');
+        } else {
+            return String(minutes).padStart(2, '0') + ':' +
+                   String(seconds).padStart(2, '0');
+        }
+    }
+
+    // Stopwatch Functionality
     let activeTimer = {
         intervalId: null,
         startTime: null,
         taskId: null,
-        timerElement: null,
-        originalTime: 0
+        stopwatchElement: null,
+        progressRing: null,
+        originalTime: 0,
+        estimatedTime: 0
     };
 
-    function updateTimer() {
+    function updateStopwatch() {
         const now = new Date();
         const elapsedMilliseconds = now - activeTimer.startTime;
         const totalMilliseconds = activeTimer.originalTime + elapsedMilliseconds;
         const totalSeconds = Math.floor(totalMilliseconds / 1000);
 
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+        // Update time display
+        activeTimer.stopwatchElement.textContent = formatTime(totalSeconds);
 
-        let formattedTime =
-            String(minutes).padStart(2, '0') + ':' +
-            String(seconds).padStart(2, '0');
-
-        if (hours > 0) {
-            formattedTime = String(hours).padStart(2, '0') + ':' + formattedTime;
+        // Update progress ring if there's an estimated time
+        if (activeTimer.estimatedTime > 0 && activeTimer.progressRing) {
+            const progress = Math.min(totalSeconds / activeTimer.estimatedTime, 1);
+            const circumference = 2 * Math.PI * 34;
+            const offset = circumference - (progress * circumference);
+            activeTimer.progressRing.style.strokeDashoffset = offset;
         }
 
-        activeTimer.timerElement.textContent = formattedTime;
+        // Check if stopwatch exceeded estimated time
+        const taskItem = document.querySelector(`.task-item[data-task-id="${activeTimer.taskId}"]`);
+        if (activeTimer.estimatedTime > 0) {
+            if (totalSeconds >= activeTimer.estimatedTime) {
+                // Exceeded goal time
+                const circularTimer = taskItem.querySelector('.circular-timer');
+                circularTimer.classList.add('exceeded');
+
+                // Stop the timer and auto-submit
+                const stopButton = document.querySelector(`.stop-btn[data-task-id="${activeTimer.taskId}"]`);
+            }
+        }
     }
 
     function parseDuration(durationStr) {
-        if (!durationStr || durationStr === "0:00:00") return 0;
+        if (!durationStr || durationStr === "0:00:00" || durationStr === "00:00") return 0;
         const parts = durationStr.split(':').map(Number);
         let milliseconds = 0;
         if (parts.length === 3) {
@@ -109,9 +294,24 @@
         return milliseconds;
     }
 
+    function parseDurationToSeconds(durationStr) {
+        if (!durationStr || durationStr === "0:00:00" || durationStr === "00:00") return 0;
+        const parts = durationStr.split(':').map(Number);
+        let seconds = 0;
+        if (parts.length === 3) {
+            seconds += parts[0] * 3600;
+            seconds += parts[1] * 60;
+            seconds += parts[2];
+        } else if (parts.length === 2) {
+            seconds += parts[0] * 60;
+            seconds += parts[1];
+        }
+        return seconds;
+    }
+
     document.addEventListener('click', function(e) {
         // START BUTTON
-        if (e.target.matches('.start-btn')) {
+        if (e.target.closest('.start-btn')) {
             e.preventDefault();
 
             if (activeTimer.intervalId) {
@@ -119,33 +319,42 @@
                 return;
             }
 
-            const button = e.target;
+            const button = e.target.closest('.start-btn');
             const taskId = button.dataset.taskId;
             const taskItem = button.closest('.task-item');
-            const timerDisplay = taskItem.querySelector('.timer-display');
+            const circularTimer = taskItem.querySelector('.circular-timer');
+            const stopwatchDisplay = taskItem.querySelector('.stopwatch-time');
             const stopButton = taskItem.querySelector('.stop-btn');
+            const progressRing = document.getElementById(`progress-ring-${taskId}`);
+
+            // Get estimated time if exists
+            const goalElement = document.getElementById(`goal-time-${taskId}`);
+            const estimatedTime = goalElement ? parseInt(goalElement.dataset.seconds) : 0;
 
             activeTimer.taskId = taskId;
             activeTimer.startTime = new Date();
-            activeTimer.timerElement = timerDisplay;
-            activeTimer.originalTime = parseDuration(timerDisplay.textContent);
+            activeTimer.stopwatchElement = stopwatchDisplay;
+            activeTimer.progressRing = progressRing;
+            activeTimer.originalTime = parseDuration(stopwatchDisplay.textContent);
+            activeTimer.estimatedTime = estimatedTime;
 
-            activeTimer.intervalId = setInterval(updateTimer, 1000);
+            activeTimer.intervalId = setInterval(updateStopwatch, 1000);
 
             button.style.display = 'none';
-            stopButton.style.display = 'inline-block';
-            timerDisplay.classList.add('active');
+            stopButton.style.display = 'flex';
+            circularTimer.classList.add('active');
             taskItem.classList.add('timer-active');
         }
 
         // STOP BUTTON
-        if (e.target.matches('.stop-btn')) {
+        if (e.target.closest('.stop-btn')) {
             e.preventDefault();
 
-            const stopButton = e.target;
+            const stopButton = e.target.closest('.stop-btn');
             const taskItem = stopButton.closest('.task-item');
+            const circularTimer = taskItem.querySelector('.circular-timer');
             const startButton = taskItem.querySelector('.start-btn');
-            const timerDisplay = taskItem.querySelector('.timer-display');
+            const stopwatchDisplay = taskItem.querySelector('.stopwatch-time');
 
             clearInterval(activeTimer.intervalId);
 
@@ -158,15 +367,17 @@
             input.value = elapsedSeconds > 0 ? elapsedSeconds : 0;
 
             stopButton.style.display = 'none';
-            startButton.style.display = 'inline-block';
-            timerDisplay.classList.remove('active');
+            startButton.style.display = 'flex';
+            circularTimer.classList.remove('active');
             taskItem.classList.remove('timer-active');
 
             activeTimer.intervalId = null;
             activeTimer.startTime = null;
             activeTimer.taskId = null;
-            activeTimer.timerElement = null;
+            activeTimer.stopwatchElement = null;
+            activeTimer.progressRing = null;
             activeTimer.originalTime = 0;
+            activeTimer.estimatedTime = 0;
 
             form.submit();
         }

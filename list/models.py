@@ -10,3 +10,4 @@ class ToDoModel(models.Model):
     checker = models.BooleanField(default=False)
     is_hidden = models.BooleanField(default=False)
     timer=models.DurationField(default=timedelta(0))
+    todo_time=models.DurationField(default=timedelta(0))
