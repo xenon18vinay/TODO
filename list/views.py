@@ -19,9 +19,12 @@ def todo_list(request):
     if request.method == "POST":
         if form.is_valid():
             temp = form.save(commit=False)
-            todo_time_value = int(request.POST.get('todo_time'))
-            seconds = todo_time_value
-            temp.todo_time = timedelta(seconds=seconds)
+            try:
+                todo_time_value = int(request.POST.get('todo_time', 0))
+            except (ValueError, TypeError):
+                todo_time_value = 0
+
+            temp.todo_time = timedelta(seconds=todo_time_value)
             temp.to_user = request.user
             temp.save()
         return redirect('todo_list')
