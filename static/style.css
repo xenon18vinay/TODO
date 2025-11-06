@@ -127,7 +127,42 @@ main {
 .new-task-form .task-input-field::placeholder {
     color: var(--text-muted);
 }
+.everyday-toggle-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    height: 44px;
+    border-radius: 20px;
+    font-size: 0.813rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
 
+.everyday-toggle-btn:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+
+.everyday-toggle-btn.active {
+    background-color: rgba(129, 201, 149, 0.15);
+    border-color: var(--success-green);
+    color: var(--success-green);
+    font-weight: 600;
+}
+
+.everyday-toggle-btn.active:hover {
+    background-color: rgba(129, 201, 149, 0.2);
+    border-color: var(--success-green);
+}
 /* Time Picker Toggle Button */
 .time-toggle-btn {
     background: none;

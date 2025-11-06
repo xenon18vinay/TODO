@@ -6,7 +6,11 @@
         {% csrf_token %}
         <div class="form-main-row">
             {{ form.to_do }}
-            
+
+            <button type="button" class="everyday-toggle-btn" id="everydayToggleBtn">
+                Everyday
+            </button>
+            {{ form.is_everyday }}
             <button type="button" class="time-toggle-btn" onclick="toggleTimePicker()">
                 <span class="time-icon">⏱️</span>
                 <span class="time-text">Set time</span>
@@ -43,7 +47,7 @@
                             id="minutes" 
                             min="0" 
                             max="59" 
-                            value="0"
+                            value="0" 
                             onchange="updateTimeDisplay()"
                         >
                     </div>
@@ -144,6 +148,27 @@
     </div>
 
 <script>
+    let isEverydayActive = false;
+    const everydayBtn = document.getElementById('everydayToggleBtn');
+    const everydayHiddenInput = document.getElementById('isEverydayHidden');
+
+    everydayBtn.addEventListener('click', function() {
+        // 1. Toggle the state
+        isEverydayActive = !isEverydayActive;
+
+        // 2. Update the button style
+        everydayBtn.classList.toggle('active');
+
+        // 3. Update the hidden input's value for the form submission
+        everydayHiddenInput.value = isEverydayActive ? 'true' : 'false';
+
+        // Optional: Update text if you want
+        if (isEverydayActive) {
+            everydayBtn.textContent = 'Everyday: ON';
+        } else {
+            everydayBtn.textContent = 'Everyday';
+        }
+    });
     // Time Picker Functionality
     let isTimePickerActive = false;
 

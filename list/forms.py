@@ -15,6 +15,10 @@ class ToDoForm(forms.ModelForm):
             'todo_time': forms.HiddenInput(attrs={
                 'id': 'todoTimeHidden',
                 'value': '0'
+            }),
+            'is_everyday': forms.HiddenInput(attrs={
+                'id': 'isEverydayHidden',
+                'value': 'false'
             })
         }
         labels = {

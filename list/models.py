@@ -11,6 +11,7 @@ class ToDoModel(models.Model):
     checker = models.BooleanField(default=False)
     is_hidden = models.BooleanField(default=False)
     timer=models.DurationField(default=timedelta(0))
+    is_everyday=models.BooleanField(default=False)
     todo_time=models.DurationField(default=timedelta(0))
 
 class UserProfile(models.Model):
