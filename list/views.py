@@ -5,8 +5,9 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from datetime import timedelta
 from .forms import ToDoForm, SignUpForm
-from .models import ToDoModel
+from .models import ToDoModel,UserProfile
 from django.views.generic import CreateView
+
 
 # views.py (inside todo_list)
 from datetime import timedelta
@@ -23,7 +24,14 @@ def todo_list(request):
                 todo_time_value = int(request.POST.get('todo_time', 0))
             except (ValueError, TypeError):
                 todo_time_value = 0
+            if temp.is_everyday:
+                profiler = get_object_or_404(UserProfile,user=request.user)
 
+                every_day_list = profiler.every_day.copy()
+                tupler = (temp.to_do, todo_time_value)
+                every_day_list.append(tupler)
+                profiler.every_day = every_day_list
+                profiler.save()
             temp.todo_time = timedelta(seconds=todo_time_value)
             temp.to_user = request.user
             temp.save()

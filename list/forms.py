@@ -5,7 +5,7 @@ from django import forms
 class ToDoForm(forms.ModelForm):
     class Meta:
         model = ToDoModel
-        fields = ['to_do', 'todo_time']
+        fields = ['to_do', 'todo_time','is_everyday']
         widgets = {
             'to_do': forms.TextInput(attrs={
                 'placeholder': 'Add a task...',
@@ -16,14 +16,14 @@ class ToDoForm(forms.ModelForm):
                 'id': 'todoTimeHidden',
                 'value': '0'
             }),
-            'is_everyday': forms.HiddenInput(attrs={
-                'id': 'isEverydayHidden',
-                'value': 'false'
+            'is_everyday': forms.CheckboxInput(attrs={
+                'style': 'display: none;'
             })
         }
         labels = {
             'to_do': '',
-            'todo_time': ''
+            'todo_time': '',
+            'is_everyday': ''
         }
 
 
