@@ -6,6 +6,11 @@ class ToDoForm(forms.ModelForm):
     class Meta:
         model = ToDoModel
         fields = ['to_do', 'todo_time','is_everyday']
+        todo_time = forms.IntegerField(
+            widget=forms.HiddenInput(attrs={'id': 'todoTimeHidden'}),
+            required=False,
+            initial=0
+        )
         widgets = {
             'to_do': forms.TextInput(attrs={
                 'placeholder': 'Add a task...',
