@@ -4,19 +4,8 @@
     <!-- New Task Input Form - Enhanced Gemini Style with Time Picker -->
     <form method="POST" class="new-task-form">
         {% csrf_token %}
-        <div class="form-main-row">
+        <div class="form-input-wrapper">
             {{ form.to_do }}
-
-            <button type="button" class="everyday-toggle-btn" id="everydayToggleBtn">
-                Everyday
-            </button>
-            {{ form.is_everyday }}
-            <button type="button" class="time-toggle-btn" onclick="toggleTimePicker()">
-                <span class="time-icon">⏱️</span>
-                <span class="time-text">Set time</span>
-            </button>
-            
-            <button type="submit" class="submit-btn">→</button>
         </div>
 
         <div class="time-picker-dropdown" id="timePickerDropdown">
@@ -66,6 +55,24 @@
                 <button type="button" class="quick-select-btn" onclick="setQuickTime(4, 0)">4 hours</button>
             </div>
         </div>
+        <div class="form-toolbar">
+        <div class="form-toolbar-left">
+            <button type="button" class="toolbar-btn everyday-toggle-btn" id="everydayToggleBtn">
+                <span>Everyday</span>
+            </button>
+            {{ form.is_everyday }}
+
+            <button type="button" class="toolbar-btn time-toggle-btn" onclick="toggleTimePicker()">
+                <span class="time-icon">⏱️</span>
+                <span class="time-text">Set time</span>
+            </button>
+        </div>
+
+        <div class="form-toolbar-right">
+
+            <button type="submit" class="submit-btn" title="Add task">↑</button>
+        </div>
+    </div>
 
         <!-- Hidden input for Django form submission -->
         <input type="hidden" name="todo_time" id="todoTimeHidden" value="0">
@@ -153,19 +160,14 @@ const everydayBtn = document.getElementById('everydayToggleBtn');
 const everydayHiddenInput = document.querySelector('input[name="is_everyday"]');
 
 everydayBtn.addEventListener('click', function() {
-    // 1. Toggle the state
     isEverydayActive = !isEverydayActive;
 
-    // 2. Update the button style
-    everydayBtn.classList.toggle('active');
-
-    // 3. Update the hidden input's value for the form submission
     if (isEverydayActive) {
+        everydayBtn.classList.add('everyday-active');
         everydayHiddenInput.checked = true;
-        everydayBtn.textContent = 'Everyday';
     } else {
+        everydayBtn.classList.remove('everyday-active');
         everydayHiddenInput.checked = false;
-        everydayBtn.textContent = 'Everyday';
     }
 });
     // Time Picker Functionality
