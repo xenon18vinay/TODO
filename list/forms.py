@@ -21,9 +21,8 @@ class ToDoForm(forms.ModelForm):
                 'id': 'todoTimeHidden',
                 'value': '0'
             }),
-            'is_everyday': forms.CheckboxInput(attrs={
-                'style': 'display: none;'
-            })
+            'is_everyday': forms.HiddenInput()
+
         }
         labels = {
             'to_do': '',
