@@ -381,7 +381,24 @@ input[name="todo_time"],
 .new-task-form li {
     display: inline;
 }
+input[name="is_everyday"],
+input[name="todo_time"] {
+    display: none !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
 
+/* Ensure all form error lists are hidden */
+.new-task-form .errorlist {
+    display: none !important;
+}
+
+.new-task-form ul.errorlist {
+    display: none !important;
+}
 /* ===== RESPONSIVE FOR CLAUDE-STYLE FORM ===== */
 @media (max-width: 768px) {
     .form-input-wrapper {

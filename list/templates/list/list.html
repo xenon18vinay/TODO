@@ -3,64 +3,65 @@
 {% block content %}
     <!-- New Task Input Form - Enhanced Gemini Style with Time Picker -->
     <form method="POST" class="new-task-form">
-        {% csrf_token %}
-        <div class="form-input-wrapper">
-            {{ form.to_do }}
-        </div>
+    {% csrf_token %}
 
-        <div class="time-picker-dropdown" id="timePickerDropdown">
-            <label class="time-picker-label">Estimated time to complete</label>
-            
-            <div class="time-picker-controls">
-                <div class="time-input-group">
-                    <div class="time-input-wrapper">
-                        <span class="time-input-label">Hours</span>
-                        <input 
-                            type="number" 
-                            class="time-input" 
-                            id="hours" 
-                            min="0" 
-                            max="99" 
-                            value="0"
-                            onchange="updateTimeDisplay()"
-                        >
-                    </div>
-                    
-                    <span class="time-separator">:</span>
-                    
-                    <div class="time-input-wrapper">
-                        <span class="time-input-label">Minutes</span>
-                        <input 
-                            type="number" 
-                            class="time-input" 
-                            id="minutes" 
-                            min="0" 
-                            max="59" 
-                            value="0" 
-                            onchange="updateTimeDisplay()"
-                        >
-                    </div>
+    <div class="form-input-wrapper">
+        {{ form.to_do }}
+    </div>
+
+    <div class="time-picker-dropdown" id="timePickerDropdown">
+        <label class="time-picker-label">Estimated time to complete</label>
+
+        <div class="time-picker-controls">
+            <div class="time-input-group">
+                <div class="time-input-wrapper">
+                    <span class="time-input-label">Hours</span>
+                    <input
+                        type="number"
+                        class="time-input"
+                        id="hours"
+                        min="0"
+                        max="99"
+                        value="0"
+                        onchange="updateTimeDisplay()"
+                    >
                 </div>
 
-                <button type="button" class="clear-time-btn" onclick="clearTime()">
-                    Clear
-                </button>
+                <span class="time-separator">:</span>
+
+                <div class="time-input-wrapper">
+                    <span class="time-input-label">Minutes</span>
+                    <input
+                        type="number"
+                        class="time-input"
+                        id="minutes"
+                        min="0"
+                        max="59"
+                        value="0"
+                        onchange="updateTimeDisplay()"
+                    >
+                </div>
             </div>
 
-            <div class="quick-select">
-                <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 15)">15 min</button>
-                <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 30)">30 min</button>
-                <button type="button" class="quick-select-btn" onclick="setQuickTime(1, 0)">1 hour</button>
-                <button type="button" class="quick-select-btn" onclick="setQuickTime(2, 0)">2 hours</button>
-                <button type="button" class="quick-select-btn" onclick="setQuickTime(4, 0)">4 hours</button>
-            </div>
+            <button type="button" class="clear-time-btn" onclick="clearTime()">
+                Clear
+            </button>
         </div>
-        <div class="form-toolbar">
+
+        <div class="quick-select">
+            <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 15)">15 min</button>
+            <button type="button" class="quick-select-btn" onclick="setQuickTime(0, 30)">30 min</button>
+            <button type="button" class="quick-select-btn" onclick="setQuickTime(1, 0)">1 hour</button>
+            <button type="button" class="quick-select-btn" onclick="setQuickTime(2, 0)">2 hours</button>
+            <button type="button" class="quick-select-btn" onclick="setQuickTime(4, 0)">4 hours</button>
+        </div>
+    </div>
+
+    <div class="form-toolbar">
         <div class="form-toolbar-left">
             <button type="button" class="toolbar-btn everyday-toggle-btn" id="everydayToggleBtn">
                 <span>Everyday</span>
             </button>
-            {{ form.is_everyday }}
 
             <button type="button" class="toolbar-btn time-toggle-btn" onclick="toggleTimePicker()">
                 <span class="time-icon">⏱️</span>
@@ -69,14 +70,14 @@
         </div>
 
         <div class="form-toolbar-right">
-
             <button type="submit" class="submit-btn" title="Add task">↑</button>
         </div>
     </div>
 
-        <!-- Hidden input for Django form submission -->
-        <input type="hidden" name="todo_time" id="todoTimeHidden" value="0">
-    </form>
+    <!-- Hidden inputs for form submission -->
+    <input type="hidden" name="is_everyday" id="isEverydayHidden" value="">
+    <input type="hidden" name="todo_time" id="todoTimeHidden" value="0">
+</form>
 
 
     <div class="task-list">
@@ -157,17 +158,17 @@
 <script>
 let isEverydayActive = false;
 const everydayBtn = document.getElementById('everydayToggleBtn');
-const everydayHiddenInput = document.querySelector('input[name="is_everyday"]');
+const everydayHiddenInput = document.getElementById('isEverydayHidden');
 
 everydayBtn.addEventListener('click', function() {
     isEverydayActive = !isEverydayActive;
 
     if (isEverydayActive) {
         everydayBtn.classList.add('everyday-active');
-        everydayHiddenInput.checked = true;
+        everydayHiddenInput.value = 'on';  // Set value for form submission
     } else {
         everydayBtn.classList.remove('everyday-active');
-        everydayHiddenInput.checked = false;
+        everydayHiddenInput.value = '';     // Clear value
     }
 });
     // Time Picker Functionality
