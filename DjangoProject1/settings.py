@@ -25,7 +25,13 @@ SECRET_KEY = 'django-insecure-8dnj4lss52_y(4ag*@b=yy-x&a-ub9!2xx@0^^ijp6yrxf-(b#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fairplay47.club', 'www.fairplay47.club', '127.0.0.1', 'localhost', '*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://fairplay47.club',
+    'https://www.fairplay47.club',
+    'http://fairplay47.club',
+    'http://www.fairplay47.club',
+]
 
 
 # Application definition
@@ -38,7 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'list',
+    'django_apscheduler',
 ]
+
+APSCHEDULER_AUTOSTART = True
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+# To keep the database clean
+APSCHEDULER_RUN_AFTER_UNEQUAL_DATETIME = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
