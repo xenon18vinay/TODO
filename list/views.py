@@ -64,8 +64,7 @@ def time_spend(request, pk):
         todo.timer = todo.timer + new_duration
         todo.save()
 
-        # Auto-complete if stopwatch exceeds estimated time
-        if todo.timer >= todo.todo_time and not todo.checker:
+        if todo.timer >= todo.todo_time>timedelta(seconds=0) and not todo.checker :
             _perform_toggle(todo)
 
     return redirect('todo_list')
