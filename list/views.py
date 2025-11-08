@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
@@ -63,6 +63,8 @@ def time_spend(request, pk):
         new_duration = timedelta(seconds=int(seconds_str))
         todo.timer = todo.timer + new_duration
         todo.save()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'total_seconds': todo.timer})
 
         if todo.timer >= todo.todo_time>timedelta(seconds=0) and not todo.checker :
             _perform_toggle(todo)
