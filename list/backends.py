@@ -13,7 +13,7 @@ class EmailOrUsernameBackend(ModelBackend):
             return None
 
         if user.check_password(password):
-            return None
+            return user
 
         return None
 

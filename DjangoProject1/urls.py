@@ -17,9 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from list import views as list_views
+from django.contrib.auth import views as auth_views
+from list.forms import EmailOrUsernameLoginForm
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/',list_views.SignUpView.as_view(),name='signup'),
+    path('login/',auth_views.LoginView.as_view(
+        template_name='registration/login.html',
+        authentication_form=EmailOrUsernameLoginForm
+    ),name='login'),
     path("",include('list.urls'), name="home"),
 ]
