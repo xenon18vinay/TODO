@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'list',
-    'django_apscheduler',
+    'django_apscheduler'
+
 ]
 
 APSCHEDULER_AUTOSTART = True
