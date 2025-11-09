@@ -16,10 +16,21 @@
                         <span class="form-error">{{ form.username.errors.0 }}</span>
                     {% endif %}
                 </div>
-
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <span class="form-error">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
                 <div class="form-group">
                     <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                     <div class="password-wrapper">
                     {{ form.password1 }}
+                         <button type="button" class="toggle-password-btn" data-target="{{ form.password1.id_for_label }}">
+                            Show
+                        </button>
+                     </div>
                     {% if form.password1.errors %}
                         <span class="form-error">{{ form.password1.errors.0 }}</span>
                     {% endif %}
@@ -27,7 +38,12 @@
 
                 <div class="form-group">
                     <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                    <div class="password-wrapper">
                     {{ form.password2 }}
+                     <button type="button" class="toggle-password-btn" data-target="{{ form.password2.id_for_label }}">
+                            Show
+                        </button>
+                     </div>
                     {% if form.password2.errors %}
                         <span class="form-error">{{ form.password2.errors.0 }}</span>
                     {% endif %}
@@ -47,4 +63,30 @@
             </p>
         </div>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find all toggle buttons on the page
+        const toggleButtons = document.querySelectorAll('.toggle-password-btn');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the target input ID from the button's 'data-target' attribute
+                const targetInputId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetInputId);
+
+                if (!passwordInput) {
+                    console.error('Could not find password input with ID:', targetInputId);
+                    return;
+                }
+
+                // Check the current type and toggle it
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Change the button text
+                this.textContent = (type === 'password') ? 'Show' : 'Hide';
+            });
+        });
+    });
+    </script>
 {% endblock %}

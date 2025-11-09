@@ -875,7 +875,7 @@ input[name="todo_time"] {
     color: var(--text-secondary);
     margin-bottom: 4px;
 }
-
+.auth-form input[type='email'],
 .auth-form input[type="text"],
 .auth-form input[type="password"] {
     background-color: var(--bg-primary);
@@ -888,7 +888,7 @@ input[name="todo_time"] {
     transition: all 0.2s ease;
     width: 100%;
 }
-
+.auth-form input[type='email']:focus,
 .auth-form input[type="text"]:focus,
 .auth-form input[type="password"]:focus {
     border-color: var(--accent-blue);
@@ -952,7 +952,30 @@ input[name="todo_time"] {
     text-decoration: underline;
 }
 
+.password-wrapper {
+    position: relative;
+}
 
+.toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 12px; /* Position 12px from the right edge */
+    transform: translateY(-50%);
+
+    /* Simple styling */
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 4px;
+    z-index: 10; /* Make sure it's above the input */
+}
+
+.toggle-password-btn:hover {
+    color: var(--accent-blue);
+}
 /* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
     from {

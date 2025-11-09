@@ -33,4 +33,4 @@ class ToDoForm(forms.ModelForm):
 
 class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        fields = ('username',)
+        fields = ('username','email')
