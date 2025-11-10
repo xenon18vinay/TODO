@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ToDoModel,UserProfile
+from .models import ToDoModel
 # Register your models here.
 
 class ToDoModelAdmin(admin.ModelAdmin):
@@ -8,7 +8,3 @@ class ToDoModelAdmin(admin.ModelAdmin):
     search_fields = ['to_user__username']
     list_per_page = 30
 
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user','every_day','user__email']
-admin.site.register(UserProfile,UserProfileAdmin)
-admin.site.register(ToDoModel,ToDoModelAdmin)

@@ -3,15 +3,24 @@ from .models import ToDoModel
 from django import forms
 
 class ToDoForm(forms.ModelForm):
-    todo_time = forms.IntegerField(
-        widget=forms.HiddenInput(attrs={'id': 'todoTimeHidden'}),
+    is_recurring = forms.BooleanField(
         required=False,
-        initial=0
+        label = "",
+        widget = forms.HiddenInput(attrs={
+            'id':'isRecurringHidden',
+            'class':'recurring-checkbox'
+
+
+        })
     )
     class Meta:
         model = ToDoModel
-        fields = ['to_do', 'todo_time','is_everyday']
-
+        fields = ['to_do', 'todo_time']
+        todo_time = forms.IntegerField(
+            widget=forms.HiddenInput(attrs={'id': 'todoTimeHidden'}),
+            required=False,
+            initial=0
+        )
         widgets = {
             'to_do': forms.TextInput(attrs={
                 'placeholder': 'Add a task...',
