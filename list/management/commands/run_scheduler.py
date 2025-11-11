@@ -20,9 +20,9 @@ class Command(BaseCommand):
         scheduler.add_job(
             func=create_daily_elements_task,
             trigger='cron',
-            hour=11,
-            minute=56,
-            id='create_daily_elements_at_midnight',
+            hour=12,
+            minute=4,
+            id='create_daily_elements',
             replace_existing = True,
             misfire_grace_time=900,
         )

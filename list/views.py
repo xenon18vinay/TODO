@@ -3,9 +3,8 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
-from datetime import timedelta
 from .forms import ToDoForm, SignUpForm
-from .models import ToDoModel
+from .models import ToDoModel,RecurringTodoTemplate
 from django.views.generic import CreateView
 
 
@@ -16,15 +15,21 @@ import re
 
 @login_required
 def todo_list(request):
+
     form = ToDoForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             temp = form.save(commit=False)
+            if request.POST.get('is_recurring'):
+                RecurringTodoTemplate.objects.create(
+                    user=request.user,
+                    task_name=temp.to_do,
+                    todo_time=temp.timer,
+                )
             try:
                 todo_time_value = int(request.POST.get('todo_time', 0))
             except (ValueError, TypeError):
                 todo_time_value = 0
-
             temp.todo_time = timedelta(seconds=todo_time_value)
             temp.to_user = request.user
             temp.save()
