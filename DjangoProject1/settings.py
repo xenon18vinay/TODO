@@ -23,15 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8dnj4lss52_y(4ag*@b=yy-x&a-ub9!2xx@0^^ijp6yrxf-(b#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['fairplay47.club', 'www.fairplay47.club', '127.0.0.1', 'localhost', '*']
-CSRF_TRUSTED_ORIGINS = [
-    'https://fairplay47.club',
-    'https://www.fairplay47.club',
-    'http://fairplay47.club',
-    'http://www.fairplay47.club',
-]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -47,11 +41,6 @@ INSTALLED_APPS = [
     'django_apscheduler'
 
 ]
-
-APSCHEDULER_AUTOSTART = True
-APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-# To keep the database clean
-APSCHEDULER_RUN_AFTER_UNEQUAL_DATETIME = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,7 +83,7 @@ DATABASES = {
     }
 }
 
-
+AUTHENTICATION_BACKENDS = ['list.backends.EmailOrUsernameBackend']
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -106,23 +95,22 @@ AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = '/home/admin/domains/fairplay47.club/public_html/static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+LOGIN_URL='login'
 LOGIN_REDIRECT_URL = 'todo_list'
 LOGOUT_REDIRECT_URL = 'todo_list'

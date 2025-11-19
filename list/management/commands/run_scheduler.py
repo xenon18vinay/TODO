@@ -1,7 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django_apscheduler.jobstores import DjangoJobStore,register_job
+from django_apscheduler.jobstores import DjangoJobStore
 from list.task import create_daily_elements_task
 
 
@@ -20,8 +20,8 @@ class Command(BaseCommand):
         scheduler.add_job(
             func=create_daily_elements_task,
             trigger='cron',
-            hour=12,
-            minute=4,
+            hour=11,
+            minute=56,
             id='create_daily_elements',
             replace_existing = True,
             misfire_grace_time=900,
