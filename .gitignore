@@ -15,7 +15,7 @@ local_settings.py
 
 # Environment
 .env
-.env.local
+.env
 .env.testing
 .env.production
 *.env
