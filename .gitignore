@@ -12,9 +12,9 @@ db.sqlite3
 db.sqlite3-journal
 /media
 local_settings.py
+list/migrations
 
 # Environment
-.env
 .env
 .env.testing
 .env.production
