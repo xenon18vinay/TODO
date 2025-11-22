@@ -380,7 +380,7 @@ async function sendHeartbeat() {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': csrfToken
+                'X-CSRFToken': csrfToken,
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: formData
