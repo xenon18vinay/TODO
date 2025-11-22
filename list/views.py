@@ -13,28 +13,33 @@ from datetime import timedelta
 import re
 
 
-@login_required
 def todo_list(request):
 
     form = ToDoForm(request.POST or None)
     if request.method == "POST":
-        if form.is_valid():
-            temp = form.save(commit=False)
-            if request.POST.get('is_recurring'):
-                RecurringTodoTemplate.objects.create(
-                    user=request.user,
-                    task_name=temp.to_do,
-                    todo_time=temp.timer,
-                )
-            try:
-                todo_time_value = int(request.POST.get('todo_time', 0))
-            except (ValueError, TypeError):
-                todo_time_value = 0
-            temp.todo_time = timedelta(seconds=todo_time_value)
-            temp.to_user = request.user
-            temp.save()
-        return redirect('todo_list')
-    all_to_do = ToDoModel.objects.filter(to_user=request.user, is_hidden=False).order_by('-created_at')
+        if request.user.is_authenticated:
+            if form.is_valid():
+                temp = form.save(commit=False)
+                if request.POST.get('is_recurring'):
+                    RecurringTodoTemplate.objects.create(
+                        user=request.user,
+                        task_name=temp.to_do,
+                        todo_time=temp.timer,
+                    )
+                try:
+                    todo_time_value = int(request.POST.get('todo_time', 0))
+                except (ValueError, TypeError):
+                    todo_time_value = 0
+                temp.todo_time = timedelta(seconds=todo_time_value)
+                temp.to_user = request.user
+                temp.save()
+            return redirect('todo_list')
+        else:
+            return redirect('login')
+    if request.user.is_authenticated:
+        all_to_do = ToDoModel.objects.filter(to_user=request.user, is_hidden=False).order_by('-created_at')
+    else:
+        all_to_do = []
     to_do_form = ToDoForm()
     return render(request, 'list/list.html', context={
         'form': to_do_form,

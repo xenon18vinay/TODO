@@ -381,6 +381,7 @@ async function sendHeartbeat() {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrfToken
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: formData
         });
