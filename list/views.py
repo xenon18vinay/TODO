@@ -24,7 +24,7 @@ def todo_list(request):
                     RecurringTodoTemplate.objects.create(
                         user=request.user,
                         task_name=temp.to_do,
-                        todo_time=temp.timer,
+                        todo_time=temp.todo_time,
                     )
                 try:
                     todo_time_value = int(request.POST.get('todo_time', 0))
