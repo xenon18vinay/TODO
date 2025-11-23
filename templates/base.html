@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <nav>
-            <div class="brand">My Tasks</div>
+            <a class="brand" href={% url 'todo_list' %}>My Tasks</a>
             <div class="auth-links">
                 {% if user.is_authenticated %}
                     <span>Hi, {{ user.username }}</span>
