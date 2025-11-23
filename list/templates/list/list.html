@@ -1,6 +1,105 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <!-- Intro Slides Overlay -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-slides-container">
+            <!-- Slide 1: Welcome -->
+            <div class="intro-slide active" data-slide="1">
+                <div class="intro-slide-content">
+                    <div class="intro-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                        </svg>
+                    </div>
+                    <h2 class="intro-title">Welcome to My Tasks</h2>
+                    <p class="intro-description">Stay organized and track your time efficiently. Let's show you how to get started in just a few simple steps.</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Adding Tasks -->
+            <div class="intro-slide" data-slide="2">
+                <div class="intro-slide-content">
+                    <div class="intro-visual">
+                        <div class="demo-form">
+                            <div class="demo-input">Add a task...</div>
+                            <div class="demo-toolbar">
+                                <div class="demo-btn">Everyday</div>
+                                <div class="demo-btn">⏱️ Set time</div>
+                                <div class="demo-add-btn">+</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="intro-title">Create Your Tasks</h2>
+                    <p class="intro-description">Type your task, optionally set a time goal, or toggle "Everyday" for recurring tasks. Hit the + button to add it to your list.</p>
+                </div>
+            </div>
+
+            <!-- Slide 3: Track Time -->
+            <div class="intro-slide" data-slide="3">
+                <div class="intro-slide-content">
+                    <div class="intro-visual">
+                        <div class="demo-task">
+                            <div class="demo-checkbox"></div>
+                            <div class="demo-task-text">
+                                <div class="demo-task-name">Complete project</div>
+                                <div class="demo-task-meta">Goal: 2:00:00</div>
+                            </div>
+                            <div class="demo-timer">
+                                <span>00:00</span>
+                                <div class="demo-play-btn">▶</div>
+                            </div>
+                            <div class="demo-delete-btn">🗑️</div>
+                        </div>
+                    </div>
+                    <h2 class="intro-title">Track Your Time</h2>
+                    <p class="intro-description">Click the play button to start tracking time on any task. Check the box when complete, or delete tasks you no longer need.</p>
+                </div>
+            </div>
+
+            <!-- Slide 4: Recurring Tasks -->
+            <div class="intro-slide" data-slide="4">
+                <div class="intro-slide-content">
+                    <div class="intro-visual">
+                        <div class="demo-recurring">
+                            <div class="demo-recurring-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                </svg>
+                                <span>Recurring Tasks</span>
+                            </div>
+                            <div class="demo-recurring-item">
+                                <span>Daily workout</span>
+                                <div class="demo-actions">
+                                    <div class="demo-action-btn">⏰</div>
+                                    <div class="demo-action-btn">🗑️</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="intro-title">Manage Recurring Tasks</h2>
+                    <p class="intro-description">Tasks marked as "Everyday" appear here. They'll automatically recreate each day, perfect for daily habits and routines.</p>
+                </div>
+            </div>
+
+            <!-- Slide Navigation -->
+            <div class="intro-navigation">
+                <div class="intro-dots">
+                    <span class="intro-dot active" data-slide="1"></span>
+                    <span class="intro-dot" data-slide="2"></span>
+                    <span class="intro-dot" data-slide="3"></span>
+                    <span class="intro-dot" data-slide="4"></span>
+                </div>
+                <div class="intro-buttons">
+                    <button class="intro-btn intro-skip" id="introSkip">Skip</button>
+                    <button class="intro-btn intro-next" id="introNext">Next</button>
+                    <button class="intro-btn intro-done" id="introDone" style="display: none;">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- New Task Input Form - Enhanced Gemini Style with Time Picker -->
     <form method="POST" class="new-task-form">
     {% csrf_token %}
@@ -836,6 +935,102 @@ function updateRecurringTimeDisplay(taskId) {
         clockContainer.style.display = 'none';
     }
 }
+
+// ============================================================
+// INTRO SLIDES FUNCTIONALITY
+// ============================================================
+
+let currentSlide = 1;
+const totalSlides = 4;
+
+function showSlide(slideNumber) {
+    // Hide all slides
+    document.querySelectorAll('.intro-slide').forEach(slide => {
+        slide.classList.remove('active');
+    });
+    
+    // Show current slide
+    const targetSlide = document.querySelector(`.intro-slide[data-slide="${slideNumber}"]`);
+    if (targetSlide) {
+        targetSlide.classList.add('active');
+    }
+    
+    // Update dots
+    document.querySelectorAll('.intro-dot').forEach(dot => {
+        dot.classList.remove('active');
+    });
+    const targetDot = document.querySelector(`.intro-dot[data-slide="${slideNumber}"]`);
+    if (targetDot) {
+        targetDot.classList.add('active');
+    }
+    
+    // Update buttons
+    const nextBtn = document.getElementById('introNext');
+    const doneBtn = document.getElementById('introDone');
+    
+    if (slideNumber === totalSlides) {
+        nextBtn.style.display = 'none';
+        doneBtn.style.display = 'block';
+    } else {
+        nextBtn.style.display = 'block';
+        doneBtn.style.display = 'none';
+    }
+}
+
+function closeIntro() {
+    const overlay = document.getElementById('introOverlay');
+    overlay.classList.add('hidden');
+    // Mark intro as completed in localStorage
+    localStorage.setItem('hasVisitedBefore', 'true');
+}
+
+// Check if this is first visit
+// If 'hasVisitedBefore' doesn't exist in localStorage, show intro
+const hasVisited = localStorage.getItem('hasVisitedBefore');
+
+if (!hasVisited && document.getElementById('introOverlay')) {
+    // First time visitor - show intro
+    document.getElementById('introOverlay').classList.remove('hidden');
+} else if (document.getElementById('introOverlay')) {
+    // Returning visitor - hide intro
+    document.getElementById('introOverlay').classList.add('hidden');
+}
+
+// Next button
+const nextBtn = document.getElementById('introNext');
+if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+    });
+}
+
+// Done button
+const doneBtn = document.getElementById('introDone');
+if (doneBtn) {
+    doneBtn.addEventListener('click', () => {
+        closeIntro();
+    });
+}
+
+// Skip button
+const skipBtn = document.getElementById('introSkip');
+if (skipBtn) {
+    skipBtn.addEventListener('click', () => {
+        closeIntro();
+    });
+}
+
+// Dot navigation
+document.querySelectorAll('.intro-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+        const slideNum = parseInt(dot.getAttribute('data-slide'));
+        currentSlide = slideNum;
+        showSlide(currentSlide);
+    });
+});
 
 </script>
 {% endblock %}
