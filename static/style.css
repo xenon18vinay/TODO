@@ -16,7 +16,9 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
+
 
 body {
     font-family: 'Google Sans', 'Segoe UI', Roboto, Arial, sans-serif;
