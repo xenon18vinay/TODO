@@ -90,7 +90,24 @@ def delete_todo(request, pk):
     todo.save()
     return redirect('todo_list')
 
-
+@login_required
+@require_POST
+def delete_recurring(request,pk):
+    recurring = get_object_or_404(RecurringTodoTemplate,id=pk,user=request.user)
+    recurring.is_active=False
+    recurring.save()
+    return redirect('todo_list')
+@login_required
+@require_POST
+def update_recurring(request,pk):
+    recurring = get_object_or_404(RecurringTodoTemplate,id=pk,user=request.user)
+    try:
+      todo_time_value= int(request.POST.get('todo_time',0))
+    except (ValueError,TypeError):
+        todo_time_value=0
+    recurring.todo_time=timedelta(seconds=todo_time_value)
+    recurring.save()
+    return redirect('todo_list')
 class SignUpView(CreateView):
     form_class = SignUpForm
     template_name = 'registration/signup.html'

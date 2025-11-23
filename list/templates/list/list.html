@@ -64,7 +64,10 @@
             </button>
 
             <button type="button" class="toolbar-btn time-toggle-btn" onclick="toggleTimePicker()">
-                <span class="time-icon">⏱️</span>
+                <span class="time-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg></span>
                 <span class="time-text">Set time</span>
             </button>
         </div>
@@ -78,6 +81,7 @@
             </button>
         </div>
     </div>
+
 
     <!-- Hidden inputs for form submission -->
     <input type="hidden" name="is_recurring" id="isRecurringHidden" value="">
@@ -109,21 +113,15 @@
                         </div>
                         
                         <div class="recurring-task-actions">
-                            <button class="recurring-action-btn edit-btn" title="Edit time">
+                            <button class="recurring-action-btn edit-btn" onclick="toggleRecurringTimePicker({{ element.pk }})" title="Edit time">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
                             </button>
-                            
-                            <button class="recurring-action-btn pause-btn" title="Pause">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="10" y1="15" x2="10" y2="9"></line>
-                                    <line x1="14" y1="15" x2="14" y2="9"></line>
-                                </svg>
-                            </button>
-                            
+
+                            <form method="POST" action={% url 'delete_recurring' pk=element.pk %} >
+                                {% csrf_token %}
                             <button class="recurring-action-btn delete-btn" title="Delete">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
@@ -132,7 +130,73 @@
                                     <line x1="14" y1="11" x2="14" y2="17"></line>
                                 </svg>
                             </button>
+                            </form>
                         </div>
+
+                        <!-- Time Picker Dropdown for Recurring Task -->
+                        <form method="POST" action={% url 'update_recurring' pk=element.pk %} class="recurring-time-form">
+                             {% csrf_token %}
+
+                        <div class="recurring-time-picker-dropdown" id="recurringTimePicker-{{ element.pk }}" style="display: none;">
+                            <label class="time-picker-label">Edit Goal Time</label>
+
+                            <div class="time-picker-controls">
+                                <div class="time-input-group">
+                                    <div class="time-input-wrapper">
+                                        <span class="time-input-label">Hours</span>
+                                        <input
+                                            type="number"
+                                            class="time-input"
+                                            id="recurring-hours-{{ element.pk }}"
+                                            min="0"
+                                            max="99"
+                                            value="0"
+                                            onchange="updateRecurringTimeDisplay({{ element.pk }})"
+                                        >
+                                    </div>
+
+                                    <span class="time-separator">:</span>
+
+                                    <div class="time-input-wrapper">
+                                        <span class="time-input-label">Minutes</span>
+                                        <input
+                                            type="number"
+                                            class="time-input"
+                                            id="recurring-minutes-{{ element.pk }}"
+                                            min="0"
+                                            max="59"
+                                            value="0"
+                                            onchange="updateRecurringTimeDisplay({{ element.pk }})"
+                                        >
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="clear-time-btn" onclick="clearRecurringTime({{ element.pk }})">
+                                    Clear
+                                </button>
+                            </div>
+                                <input type="hidden" name="todo_time" id="recurring-todo-time-{{ element.pk }}" value="0">
+
+                            <div class="quick-select">
+                                <button type="button" class="quick-select-btn" onclick="setRecurringQuickTime({{ element.pk }}, 0, 15)">15 min</button>
+                                <button type="button" class="quick-select-btn" onclick="setRecurringQuickTime({{ element.pk }}, 0, 30)">30 min</button>
+                                <button type="button" class="quick-select-btn" onclick="setRecurringQuickTime({{ element.pk }}, 1, 0)">1 hour</button>
+                                <button type="button" class="quick-select-btn" onclick="setRecurringQuickTime({{ element.pk }}, 2, 0)">2 hours</button>
+                                <button type="button" class="quick-select-btn" onclick="setRecurringQuickTime({{ element.pk }}, 4, 0)">4 hours</button>
+                            </div>
+
+
+
+                            <div class="recurring-time-actions">
+                                <button type="submit" class="recurring-time-save-btn">
+                                    Save
+                                </button>
+                                <button type="button" class="recurring-time-cancel-btn" onclick="toggleRecurringTimePicker({{ element.pk }})">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     </div>
                 {% endfor %}
             {% else %}
@@ -335,14 +399,27 @@ function updateTimeDisplay() {
 
     const button = document.querySelector('.time-toggle-btn');
     const timeText = button.querySelector('.time-text');
+    const clockContainer = document.getElementById('clockDisplayContainer');
+    const clockTime = document.getElementById('clockTime');
 
     if (totalSeconds > 0) {
         let displayText = '';
         if (hours > 0) displayText += `${hours}h `;
         if (minutes > 0) displayText += `${minutes}m`;
         timeText.textContent = displayText.trim();
+        
+        // Show clock display with formatted time
+        if (clockContainer && clockTime) {
+            clockTime.textContent = formatTime(totalSeconds);
+            clockContainer.style.display = 'block';
+        }
     } else {
         timeText.textContent = isTimePickerActive ? 'Hide time' : 'Set time';
+        
+        // Hide clock display when time is 0
+        if (clockContainer) {
+            clockContainer.style.display = 'none';
+        }
     }
 }
 
@@ -419,10 +496,10 @@ function parseDurationToSeconds(durationStr) {
  * Now includes heartbeatIntervalId and lastSavedSeconds
  */
 let activeTimer = {
-    intervalId: null,              // Visual update interval (1 second)
-    heartbeatIntervalId: null,     // 🆕 Background save interval (15 seconds)
+    intervalId: null,
+    heartbeatIntervalId: null,
     startTime: null,
-    lastSavedSeconds: 0,           // 🆕 Track last saved progress
+    lastSavedSeconds: 0,
     taskId: null,
     stopwatchElement: null,
     progressRing: null,
@@ -680,5 +757,85 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// ============================================================
+// RECURRING TASK TIME PICKER FUNCTIONS
+// ============================================================
+
+function toggleRecurringTimePicker(taskId) {
+    const dropdown = document.getElementById(`recurringTimePicker-${taskId}`);
+    const isVisible = dropdown.style.display === 'block';
+    
+    // Close all other open time pickers
+    document.querySelectorAll('.recurring-time-picker-dropdown').forEach(picker => {
+        picker.style.display = 'none';
+    });
+    
+    if (!isVisible) {
+        dropdown.style.display = 'block';
+        // Load current time if exists
+        loadCurrentRecurringTime(taskId);
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+function loadCurrentRecurringTime(taskId) {
+    // Get the task item
+    const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (!taskItem) return;
+    
+    // Try to find existing goal time
+    const goalElement = taskItem.querySelector('.recurring-task-time');
+    if (goalElement) {
+        const timeText = goalElement.textContent.replace('Goal:', '').trim();
+        const seconds = parseDurationToSeconds(timeText);
+        
+        if (seconds > 0) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            
+            document.getElementById(`recurring-hours-${taskId}`).value = hours;
+            document.getElementById(`recurring-minutes-${taskId}`).value = minutes;
+            updateRecurringTimeDisplay(taskId);
+        }
+    }
+}
+
+function setRecurringQuickTime(taskId, hours, minutes) {
+    document.getElementById(`recurring-hours-${taskId}`).value = hours;
+    document.getElementById(`recurring-minutes-${taskId}`).value = minutes;
+    updateRecurringTimeDisplay(taskId);
+}
+
+function clearRecurringTime(taskId) {
+    document.getElementById(`recurring-hours-${taskId}`).value = 0;
+    document.getElementById(`recurring-minutes-${taskId}`).value = 0;
+    updateRecurringTimeDisplay(taskId);
+}
+
+
+function updateRecurringTimeDisplay(taskId) {
+    const hours = parseInt(document.getElementById(`recurring-hours-${taskId}`).value) || 0;
+    const minutes = parseInt(document.getElementById(`recurring-minutes-${taskId}`).value) || 0;
+    const totalSeconds = (hours * 3600) + (minutes * 60);
+
+    // Update the hidden input with total seconds
+    const hiddenInput = document.getElementById(`recurring-todo-time-${taskId}`);
+    if (hiddenInput) {
+        hiddenInput.value = totalSeconds;
+    }
+
+    const clockContainer = document.getElementById(`recurringClockDisplay-${taskId}`);
+    const clockTime = document.getElementById(`recurringClockTime-${taskId}`);
+
+    if (totalSeconds > 0 && clockContainer && clockTime) {
+        clockTime.textContent = formatTime(totalSeconds);
+        clockContainer.style.display = 'block';
+    } else if (clockContainer) {
+        clockContainer.style.display = 'none';
+    }
+}
+
 </script>
 {% endblock %}

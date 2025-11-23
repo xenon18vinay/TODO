@@ -12,7 +12,7 @@ class RecurringTodoTemplate(models.Model):
     is_active=models.BooleanField(default=True)
     create_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now_add=True)
-    is_visible=models.DateTimeField(default=True)
+    # is_visible=models.DateTimeField(default=True)
     class Meta:
         indexes = [
             models.Index(fields=['user','is_active'])

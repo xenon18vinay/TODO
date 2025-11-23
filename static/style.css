@@ -408,6 +408,39 @@ input[name="todo_time"] {
 .new-task-form ul.errorlist {
     display: none !important;
 }
+
+/* Clock Display Container - Below Toolbar */
+.clock-display-container {
+    padding: 16px 24px;
+    background-color: rgba(138, 180, 248, 0.08);
+    border-top: 1px solid var(--border-color);
+    animation: slideDown 0.2s ease;
+}
+
+.clock-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.clock-label {
+    font-size: 0.875rem;
+    color: var(--accent-blue);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clock-time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    font-variant-numeric: tabular-nums;
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    letter-spacing: 1px;
+    text-shadow: 0 0 20px rgba(138, 180, 248, 0.3);
+}
 /* ===== RESPONSIVE FOR CLAUDE-STYLE FORM ===== */
 @media (max-width: 768px) {
     .form-input-wrapper {
@@ -440,6 +473,18 @@ input[name="todo_time"] {
 
     .time-picker-dropdown {
         padding: 16px;
+    }
+
+    .clock-display-container {
+        padding: 12px 20px;
+    }
+
+    .clock-label {
+        font-size: 0.813rem;
+    }
+
+    .clock-time {
+        font-size: 1.25rem;
     }
 }
 
@@ -494,6 +539,18 @@ input[name="todo_time"] {
         width: 28px;
         height: 28px;
         font-size: 0.938rem;
+    }
+
+    .clock-display-container {
+        padding: 10px 16px;
+    }
+
+    .clock-label {
+        font-size: 0.75rem;
+    }
+
+    .clock-time {
+        font-size: 1.125rem;
     }
 }
 /* ===== RECURRING TASKS SECTION ===== */
@@ -598,9 +655,9 @@ input[name="todo_time"] {
 
 /* Recurring Task Item */
 .recurring-task-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
     padding: 14px 16px;
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
@@ -759,6 +816,58 @@ input[name="todo_time"] {
 .recurring-empty-state span {
     font-size: 0.813rem;
     color: var(--text-muted);
+}
+
+/* Recurring Task Time Picker Dropdown */
+.recurring-time-picker-dropdown {
+    grid-column: 1 / -1;
+    padding: 20px;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    margin-top: 12px;
+    border-radius: 0 0 12px 12px;
+    animation: slideDown 0.2s ease;
+}
+
+.recurring-time-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+.recurring-time-save-btn,
+.recurring-time-cancel-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.recurring-time-save-btn {
+    background-color: var(--accent-blue);
+    color: var(--bg-primary);
+    border-color: var(--accent-blue);
+}
+
+.recurring-time-save-btn:hover {
+    background-color: var(--accent-blue-hover);
+    border-color: var(--accent-blue-hover);
+    transform: translateY(-1px);
+}
+
+.recurring-time-cancel-btn {
+    background-color: transparent;
+    color: var(--text-secondary);
+}
+
+.recurring-time-cancel-btn:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
 }
 
 /* ===== TASK LIST CONTAINER ===== */
@@ -1328,11 +1437,12 @@ input[name="todo_time"] {
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .container {
-        padding: 0 12px;
+        padding: 0 16px;
     }
 
     main {
         max-width: 100%;
+        padding: 0;
     }
 
     /* Navigation */
@@ -1362,29 +1472,28 @@ input[name="todo_time"] {
 
     /* Form responsive */
     .new-task-form {
-        border-radius: 24px;
+        border-radius: 20px;
         margin-bottom: 32px;
     }
 
-    .form-main-row {
-        padding: 4px 4px 4px 16px;
-        gap: 6px;
+    .form-input-wrapper {
+        padding: 16px 20px;
     }
 
     .new-task-form input[type="text"],
     .new-task-form .task-input-field {
         font-size: 0.938rem;
-        padding: 10px 6px;
     }
 
-    .time-toggle-btn {
-        padding: 6px 10px;
+    .form-toolbar {
+        padding: 10px 12px;
+    }
+
+    .toolbar-btn {
+        padding: 5px 10px;
+        height: 30px;
         font-size: 0.75rem;
         gap: 4px;
-    }
-
-    .time-icon {
-        font-size: 0.875rem;
     }
 
     .submit-btn {
@@ -1524,6 +1633,20 @@ input[name="todo_time"] {
         font-size: 0.75rem;
     }
 
+    .recurring-time-picker-dropdown {
+        padding: 16px;
+    }
+
+    .recurring-time-actions {
+        margin-top: 12px;
+    }
+
+    .recurring-time-save-btn,
+    .recurring-time-cancel-btn {
+        padding: 7px 14px;
+        font-size: 0.813rem;
+    }
+
     /* Task list container responsive */
     .task-list-container {
         border-radius: 12px;
@@ -1542,18 +1665,34 @@ input[name="todo_time"] {
         margin-bottom: 8px;
     }
 
-    /* Task items - keep horizontal layout */
+    /* Task items - keep horizontal layout, better mobile spacing */
     .task-item {
-        padding: 12px 0;
+        padding: 14px 0;
         gap: 10px;
+    }
+
+    .task-item:hover {
+        padding: 14px 8px;
+        margin-left: -8px;
+        margin-right: -8px;
     }
 
     .task-item:first-child {
         padding-top: 0;
     }
 
+    .task-item:first-child:hover {
+        padding-top: 8px;
+        margin-top: -8px;
+    }
+
     .task-item:last-child {
         padding-bottom: 0;
+    }
+
+    .task-item:last-child:hover {
+        padding-bottom: 8px;
+        margin-bottom: -8px;
     }
 
     .toggle-form {
@@ -1703,7 +1842,12 @@ input[name="todo_time"] {
 /* Extra small devices (phones in portrait, less than 576px) */
 @media (max-width: 575px) {
     .container {
-        padding: 0 8px;
+        padding: 0 12px;
+    }
+
+    main {
+        max-width: 100%;
+        padding: 0;
     }
 
     /* Navigation for very small screens */
@@ -1725,29 +1869,28 @@ input[name="todo_time"] {
 
     /* Form for very small screens */
     .new-task-form {
-        border-radius: 20px;
+        border-radius: 18px;
         margin-bottom: 24px;
     }
 
-    .form-main-row {
-        padding: 3px 3px 3px 12px;
-        gap: 4px;
+    .form-input-wrapper {
+        padding: 14px 16px;
     }
 
     .new-task-form input[type="text"],
     .new-task-form .task-input-field {
         font-size: 0.875rem;
-        padding: 8px 4px;
     }
 
-    .time-toggle-btn {
-        padding: 5px 8px;
+    .form-toolbar {
+        padding: 8px 10px;
+    }
+
+    .toolbar-btn {
+        padding: 4px 8px;
+        height: 28px;
         font-size: 0.688rem;
         gap: 3px;
-    }
-
-    .time-icon {
-        font-size: 0.813rem;
     }
 
     .submit-btn {
@@ -1786,16 +1929,32 @@ input[name="todo_time"] {
 
     /* Task items for very small screens - keep horizontal */
     .task-item {
-        padding: 10px 0;
+        padding: 12px 0;
         gap: 8px;
+    }
+
+    .task-item:hover {
+        padding: 12px 6px;
+        margin-left: -6px;
+        margin-right: -6px;
     }
 
     .task-item:first-child {
         padding-top: 0;
     }
 
+    .task-item:first-child:hover {
+        padding-top: 6px;
+        margin-top: -6px;
+    }
+
     .task-item:last-child {
         padding-bottom: 0;
+    }
+
+    .task-item:last-child:hover {
+        padding-bottom: 6px;
+        margin-bottom: -6px;
     }
 
     .toggle-form label {
@@ -1928,6 +2087,21 @@ input[name="todo_time"] {
 
     .recurring-empty-state span {
         font-size: 0.688rem;
+    }
+
+    .recurring-time-picker-dropdown {
+        padding: 12px;
+    }
+
+    .recurring-time-actions {
+        margin-top: 10px;
+        gap: 6px;
+    }
+
+    .recurring-time-save-btn,
+    .recurring-time-cancel-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
     }
 
     /* Task list container for very small screens */
