@@ -38,9 +38,10 @@ def todo_list(request):
             return redirect('login')
     if request.user.is_authenticated:
         all_to_do = ToDoModel.objects.filter(to_user=request.user, is_hidden=False).order_by('-created_at')
+        everyday = RecurringTodoTemplate.objects.filter(user=request.user, is_active=True).order_by('-create_at')
     else:
         all_to_do = []
-    everyday = RecurringTodoTemplate.objects.filter(user=request.user,is_active=True).order_by('-create_at')
+        everyday = []
     to_do_form = ToDoForm()
     return render(request, 'list/list.html', context={
         'form': to_do_form,
