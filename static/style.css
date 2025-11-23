@@ -187,31 +187,40 @@ main {
 
 
 
-/* Submit button - circular icon */
+/* Submit button - circular with plus icon */
 .submit-btn {
-    background: var(--accent-blue);
-    color: var(--bg-primary);
-    border: none;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    font-size: 1.125rem;
-    font-weight: 600;
+    width: 36px;
+    height: 36px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    padding: 0;
+}
+
+.submit-btn svg {
+    stroke: var(--text-secondary);
 }
 
 .submit-btn:hover {
-    background-color: var(--accent-blue-hover);
-    transform: scale(1.05);
+    background-color: var(--bg-hover);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    transform: scale(1.08);
+}
+
+.submit-btn:hover svg {
+    stroke: var(--accent-blue);
 }
 
 .submit-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.95);
 }
 
 /* Time Picker Dropdown */
@@ -487,37 +496,326 @@ input[name="todo_time"] {
         font-size: 0.938rem;
     }
 }
+/* ===== RECURRING TASKS SECTION ===== */
+.recurring-tasks-section {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Desktop: Keep it in flow, not fixed */
+@media (min-width: 1024px) {
+    .recurring-tasks-section {
+        max-width: 100%;
+    }
+
+    .recurring-tasks-section.collapsed {
+        max-height: 60px;
+        overflow: hidden;
+    }
+
+    .recurring-tasks-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .recurring-tasks-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .recurring-tasks-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .recurring-tasks-list::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+    }
+
+    .recurring-tasks-list::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
+}
+
+/* Tablet and below: Full width */
+@media (max-width: 1023px) {
+    .recurring-tasks-section {
+        max-width: 100%;
+    }
+}
+
+.recurring-tasks-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.recurring-tasks-header:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.recurring-tasks-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 0.938rem;
+    font-weight: 500;
+}
+
+.recurring-tasks-title svg {
+    color: var(--accent-blue);
+    flex-shrink: 0;
+}
+
+.toggle-arrow {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.recurring-tasks-section.collapsed {
+    max-height: 60px;
+}
+
+.recurring-tasks-section.collapsed .recurring-tasks-header {
+    border-bottom: none;
+}
+
+.recurring-tasks-list {
+    padding: 12px;
+}
+
+/* Recurring Task Item */
+.recurring-task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    gap: 12px;
+}
+
+.recurring-task-item:last-child {
+    margin-bottom: 0;
+}
+
+.recurring-task-item:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--text-muted);
+}
+
+.recurring-task-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.recurring-task-name {
+    font-size: 0.938rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.recurring-task-time {
+    font-size: 0.75rem;
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    background-color: rgba(138, 180, 248, 0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(138, 180, 248, 0.25);
+    display: inline-block;
+    width: fit-content;
+    letter-spacing: 0.3px;
+}
+
+/* Action Buttons */
+.recurring-task-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.recurring-action-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.recurring-action-btn:hover {
+    background-color: var(--bg-hover);
+    transform: scale(1.05);
+}
+
+.recurring-action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Edit Button - Clock Icon */
+.edit-btn {
+    color: var(--accent-blue);
+    border-color: var(--border-color);
+}
+
+.edit-btn:hover {
+    background-color: rgba(138, 180, 248, 0.15);
+    border-color: var(--accent-blue);
+}
+
+.edit-btn svg {
+    stroke: var(--accent-blue);
+}
+
+/* Pause Button */
+.pause-btn {
+    color: #f5c542;
+    border-color: var(--border-color);
+}
+
+.pause-btn:hover {
+    background-color: rgba(245, 197, 66, 0.15);
+    border-color: #f5c542;
+}
+
+.pause-btn svg {
+    stroke: #f5c542;
+}
+
+/* Delete Button - Trash Icon */
+.recurring-action-btn.delete-btn {
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+
+.recurring-action-btn.delete-btn:hover {
+    background-color: rgba(242, 139, 130, 0.15);
+    border-color: var(--delete-red);
+}
+
+.recurring-action-btn.delete-btn svg {
+    stroke: var(--text-muted);
+    transition: stroke 0.2s ease;
+}
+
+.recurring-action-btn.delete-btn:hover svg {
+    stroke: var(--delete-red);
+}
+
+/* Empty State */
+.recurring-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+}
+
+.recurring-empty-state svg {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.recurring-empty-state p {
+    font-size: 0.938rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.recurring-empty-state span {
+    font-size: 0.813rem;
+    color: var(--text-muted);
+}
+
+/* ===== TASK LIST CONTAINER ===== */
+.task-list-container {
+    background-color: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 16px 20px 20px 20px;
+    margin-top: 24px;
+    min-height: 120px;
+}
+
+.task-list-container:first-of-type {
+    margin-top: 32px;
+}
+
 /* ===== TASK LIST ===== */
 .task-list {
-    margin-top: 32px;
+    margin-top: 0;
 }
 
 .date-header {
-    color: var(--text-secondary);
-    font-size: 0.813rem;
+    color: var(--text-primary);
+    font-size: 0.938rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 16px 0 12px 0;
-    margin-top: 32px;
-}
-
-.date-header:first-child {
-    margin-top: 0;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* Task Item */
 .task-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    padding: 16px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border-color);
     transition: background-color 0.15s ease;
 }
 
+.task-item:first-child {
+    padding-top: 0;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
 .task-item:hover {
     background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-left: -8px;
+    margin-right: -8px;
 }
 
 /* Custom Checkbox */
@@ -528,7 +826,7 @@ input[name="todo_time"] {
 
 .toggle-form label {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     cursor: pointer;
     gap: 12px;
 }
@@ -550,7 +848,6 @@ input[name="todo_time"] {
     justify-content: center;
     transition: all 0.2s ease;
     flex-shrink: 0;
-    margin-top: 2px;
     background-color: transparent;
 }
 
@@ -608,13 +905,14 @@ input[name="todo_time"] {
 .task-goal {
     color: var(--accent-blue);
     font-size: 0.75rem;
-    font-weight: 500;
-    background-color: rgba(138, 180, 248, 0.15);
-    padding: 3px 10px;
-    border-radius: 12px;
+    font-weight: 600;
+    background-color: rgba(138, 180, 248, 0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
     font-variant-numeric: tabular-nums;
     font-family: 'Roboto Mono', 'Courier New', monospace;
-    border: 1px solid rgba(138, 180, 248, 0.3);
+    border: 1px solid rgba(138, 180, 248, 0.25);
+    letter-spacing: 0.3px;
 }
 
 /* ===== FLAT RECTANGLE TIMER ===== */
@@ -623,7 +921,6 @@ input[name="todo_time"] {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-left: auto;
 }
 
 .circular-timer {
@@ -631,11 +928,11 @@ input[name="todo_time"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-secondary);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    padding: 8px 12px;
-    gap: 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 6px 10px;
+    gap: 10px;
     transition: all 0.3s ease;
 }
 
@@ -792,35 +1089,68 @@ input[name="todo_time"] {
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: 1.5rem;
-    font-weight: 300;
     cursor: pointer;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    padding: 7px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    line-height: 1;
+}
+
+.delete-form button svg {
+    stroke: var(--text-muted);
+    transition: stroke 0.2s ease;
 }
 
 .delete-form button:hover {
-    color: var(--delete-red);
-    background-color: rgba(242, 139, 130, 0.1);
+    background-color: rgba(242, 139, 130, 0.15);
+}
+
+.delete-form button:hover svg {
+    stroke: var(--delete-red);
 }
 
 /* Empty State */
 .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: 60px 20px;
-    color: var(--text-muted);
 }
 
-.empty-state p {
-    font-size: 0.938rem;
-    margin-top: 12px;
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(138, 180, 248, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.empty-state-icon svg {
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+.empty-state-title {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.empty-state-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 400px;
 }
 
 /* ===== AUTHENTICATION PAGES ===== */
@@ -1058,9 +1388,13 @@ input[name="todo_time"] {
     }
 
     .submit-btn {
-        width: 38px;
-        height: 38px;
-        font-size: 1.125rem;
+        width: 34px;
+        height: 34px;
+    }
+
+    .submit-btn svg {
+        width: 18px;
+        height: 18px;
     }
 
     /* Time picker responsive */
@@ -1112,32 +1446,119 @@ input[name="todo_time"] {
         padding: 8px 12px;
     }
 
-    /* Task list */
-    .task-list {
+    /* Recurring Tasks Responsive */
+    .recurring-tasks-section {
+        border-radius: 12px;
+        margin-bottom: 24px;
+    }
+
+    .recurring-tasks-section.collapsed {
+        max-height: 56px;
+    }
+
+    .recurring-tasks-header {
+        padding: 12px 16px;
+    }
+
+    .recurring-tasks-title {
+        font-size: 0.875rem;
+        gap: 8px;
+    }
+
+    .recurring-tasks-title svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .recurring-tasks-list {
+        padding: 10px;
+    }
+
+    .recurring-task-item {
+        padding: 12px 14px;
+        margin-bottom: 6px;
+        gap: 10px;
+        border-radius: 10px;
+    }
+
+    .recurring-task-name {
+        font-size: 0.875rem;
+    }
+
+    .recurring-task-time {
+        font-size: 0.688rem;
+        padding: 3px 8px;
+        border-radius: 5px;
+    }
+
+    .recurring-task-actions {
+        gap: 5px;
+    }
+
+    .recurring-action-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+    }
+
+    .recurring-action-btn svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .recurring-empty-state {
+        padding: 36px 20px;
+    }
+
+    .recurring-empty-state svg {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 12px;
+    }
+
+    .recurring-empty-state p {
+        font-size: 0.875rem;
+    }
+
+    .recurring-empty-state span {
+        font-size: 0.75rem;
+    }
+
+    /* Task list container responsive */
+    .task-list-container {
+        border-radius: 12px;
+        padding: 14px 16px 16px 16px;
         margin-top: 24px;
     }
 
+    /* Task list */
+    .task-list {
+        margin-top: 0;
+    }
+
     .date-header {
-        font-size: 0.75rem;
-        padding: 12px 0 8px 0;
-        margin-top: 24px;
+        font-size: 0.875rem;
+        padding-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     /* Task items - keep horizontal layout */
     .task-item {
         padding: 12px 0;
-        gap: 6px;
-        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .task-item:first-child {
+        padding-top: 0;
+    }
+
+    .task-item:last-child {
+        padding-bottom: 0;
     }
 
     .toggle-form {
         flex: 1;
         min-width: 0;
-    }
-
-    .circular-timer-container {
-        margin-left: auto;
-        flex-shrink: 0;
     }
 
     /* Checkbox */
@@ -1171,14 +1592,15 @@ input[name="todo_time"] {
 
     .task-goal {
         font-size: 0.688rem;
-        padding: 2px 8px;
+        padding: 3px 8px;
+        border-radius: 5px;
     }
 
     /* Timer - make it more compact */
     .circular-timer {
-        padding: 6px 8px;
-        gap: 6px;
-        border-radius: 10px;
+        padding: 5px 8px;
+        gap: 8px;
+        border-radius: 8px;
     }
 
     .stopwatch-time {
@@ -1199,9 +1621,14 @@ input[name="todo_time"] {
 
     /* Delete button */
     .delete-form button {
-        width: 28px;
-        height: 28px;
-        font-size: 1.25rem;
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+    }
+
+    .delete-form button svg {
+        width: 15px;
+        height: 15px;
     }
 
     /* Auth pages responsive */
@@ -1250,11 +1677,26 @@ input[name="todo_time"] {
 
     /* Empty state */
     .empty-state {
-        padding: 40px 16px;
+        padding: 48px 16px;
     }
 
-    .empty-state p {
-        font-size: 0.875rem;
+    .empty-state-icon {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 16px;
+    }
+
+    .empty-state-icon svg {
+        width: 42px;
+        height: 42px;
+    }
+
+    .empty-state-title {
+        font-size: 1rem;
+    }
+
+    .empty-state-subtitle {
+        font-size: 0.813rem;
     }
 }
 
@@ -1309,9 +1751,13 @@ input[name="todo_time"] {
     }
 
     .submit-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
+        width: 32px;
+        height: 32px;
+    }
+
+    .submit-btn svg {
+        width: 16px;
+        height: 16px;
     }
 
     /* Time picker for very small screens */
@@ -1341,11 +1787,19 @@ input[name="todo_time"] {
     /* Task items for very small screens - keep horizontal */
     .task-item {
         padding: 10px 0;
-        gap: 4px;
+        gap: 8px;
+    }
+
+    .task-item:first-child {
+        padding-top: 0;
+    }
+
+    .task-item:last-child {
+        padding-bottom: 0;
     }
 
     .toggle-form label {
-        gap: 6px;
+        gap: 8px;
     }
 
     .task-text {
@@ -1359,13 +1813,14 @@ input[name="todo_time"] {
     .task-goal {
         font-size: 0.625rem;
         padding: 2px 6px;
+        border-radius: 4px;
     }
 
     /* Timer for very small screens */
     .circular-timer {
-        padding: 5px 6px;
-        gap: 4px;
-        border-radius: 8px;
+        padding: 4px 6px;
+        gap: 6px;
+        border-radius: 6px;
     }
 
     .stopwatch-time {
@@ -1386,9 +1841,124 @@ input[name="todo_time"] {
 
     /* Delete button for very small screens */
     .delete-form button {
-        width: 26px;
-        height: 26px;
-        font-size: 1.125rem;
+        width: 28px;
+        height: 28px;
+        padding: 4px;
+    }
+
+    .delete-form button svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Recurring Tasks for very small screens */
+    .recurring-tasks-section {
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .recurring-tasks-section.collapsed {
+        max-height: 52px;
+    }
+
+    .recurring-tasks-header {
+        padding: 10px 12px;
+    }
+
+    .recurring-tasks-title {
+        font-size: 0.813rem;
+        gap: 6px;
+    }
+
+    .recurring-tasks-title svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .recurring-tasks-list {
+        padding: 8px;
+    }
+
+    .recurring-task-item {
+        padding: 10px 12px;
+        margin-bottom: 5px;
+        gap: 8px;
+        border-radius: 8px;
+    }
+
+    .recurring-task-name {
+        font-size: 0.813rem;
+    }
+
+    .recurring-task-time {
+        font-size: 0.625rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .recurring-task-actions {
+        gap: 4px;
+    }
+
+    .recurring-action-btn {
+        width: 24px;
+        height: 24px;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .recurring-action-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .recurring-empty-state {
+        padding: 28px 16px;
+    }
+
+    .recurring-empty-state svg {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 10px;
+    }
+
+    .recurring-empty-state p {
+        font-size: 0.813rem;
+    }
+
+    .recurring-empty-state span {
+        font-size: 0.688rem;
+    }
+
+    /* Task list container for very small screens */
+    .task-list-container {
+        border-radius: 10px;
+        padding: 12px 12px 14px 12px;
+        margin-top: 20px;
+    }
+
+    /* Empty state for very small screens */
+    .empty-state {
+        padding: 40px 12px;
+    }
+
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 14px;
+    }
+
+    .empty-state-icon svg {
+        width: 38px;
+        height: 38px;
+    }
+
+    .empty-state-title {
+        font-size: 0.938rem;
+    }
+
+    .empty-state-subtitle {
+        font-size: 0.75rem;
     }
 
     /* Auth pages for very small screens */

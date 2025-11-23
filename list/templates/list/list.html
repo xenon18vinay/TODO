@@ -10,7 +10,7 @@
     </div>
 
     <div class="time-picker-dropdown" id="timePickerDropdown">
-        <label class="time-picker-label">Estimated time to complete</label>
+        <label class="time-picker-label">Targeted Time For Task</label>
 
         <div class="time-picker-controls">
             <div class="time-input-group">
@@ -70,7 +70,12 @@
         </div>
 
         <div class="form-toolbar-right">
-            <button type="submit" class="submit-btn" title="Add task">↑</button>
+            <button type="submit" class="submit-btn" title="Add task">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -78,82 +83,166 @@
     <input type="hidden" name="is_recurring" id="isRecurringHidden" value="">
     <input type="hidden" name="todo_time" id="todoTimeHidden" value="0">
 </form>
-
-
-    <div class="task-list">
-        {% for todo in todo_list %}
-            {% ifchanged todo.created_at.date %}
-                <div class="date-header">
-                    {{ todo.created_at|date:"d M Y" }}
-                </div>
-            {% endifchanged %}
-
-            <div class="task-item {% if todo.checker %}checked{% endif %}" data-task-id="{{ todo.pk }}">
-                <!-- Toggle Checkbox Form -->
-                <form method="POST" action="{% url 'toggle_todo' todo.pk %}" class="toggle-form">
-                    {% csrf_token %}
-                    <label for="todo-{{ todo.pk }}">
-                        <input
-                            type="checkbox"
-                            id="todo-{{ todo.pk }}"
-                            name="checker"
-                            onchange="this.form.submit()"
-                            {% if todo.checker %}checked{% endif %}
-                        >
-                        <span class="custom-checkbox"></span>
-                        <div class="task-content">
-                            <span class="task-text">{{ todo.to_do }}</span>
-                            <div class="task-meta">
-                                <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
-                                {% if todo.todo_time.total_seconds > 0 %}
-                                    <span class="task-goal">Goal: <span id="goal-time-{{ todo.pk }}" data-seconds="{{ todo.todo_time.total_seconds }}">{{ todo.todo_time|slice:":8" }}</span></span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </label>
-                </form>
-
-                <!-- Circular Timer Container -->
-                <div class="circular-timer-container">
-                    <div class="circular-timer" data-task-id="{{ todo.pk }}">
-                        <label for="stopwatch-{{ todo.pk }}">
-                        <div class="timer-content">
-                            <span class="stopwatch-time" id="stopwatch-{{ todo.pk }}" data-seconds="{{ todo.timer.total_seconds }}">
-                                {{ todo.timer|slice:":8" }}
-                            </span>
-                            <button class="timer-control-btn start-btn" data-task-id="{{ todo.pk }}" title="Start timer">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                </svg>
-                            </button>
-                            <button class="timer-control-btn stop-btn" data-task-id="{{ todo.pk }}" style="display:none;" title="Stop timer" form="time-form-{{ todo.pk }}">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="6" y="4" width="4" height="16"></rect>
-                                    <rect x="14" y="4" width="4" height="16"></rect>
-                                </svg>
-                            </button>
-                        </div></label>
-                    </div>
-                </div>
-
-                <!-- Hidden Time Form -->
-                <form id="time-form-{{ todo.pk }}" class="time-form" method="POST" action="{% url 'time_spend' todo.pk %}" style="display: none;">
-                    {% csrf_token %}
-                    <input type="hidden" name="duration_in_seconds" class="duration-input">
-                </form>
-
-                <!-- Delete Form -->
-                <form method="POST" action="{% url 'delete_todo' todo.pk %}" class="delete-form">
-                    {% csrf_token %}
-                    <button type="submit" aria-label="Delete task">&times;</button>
-                </form>
+    <!-- Recurring Tasks Section -->
+    <div class="recurring-tasks-section">
+        <div class="recurring-tasks-header" id="recurringTasksHeader">
+            <div class="recurring-tasks-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                <span>Recurring Tasks</span>
             </div>
-        {% empty %}
-            <div class="empty-state">
-                <p>No tasks yet. Start by adding one above!</p>
+            <svg class="toggle-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+        
+        <div class="recurring-tasks-list">
+            {% if everyday %}
+                {% for element in everyday %}
+                    <div class="recurring-task-item" data-task-id="{{ element.pk }}">
+                        <div class="recurring-task-content">
+                            <span class="recurring-task-name">{{ element.task_name }}</span>
+                            {% if element.todo_time.total_seconds > 0 %}
+                                <span class="recurring-task-time">Goal: {{ element.todo_time|slice:":8" }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="recurring-task-actions">
+                            <button class="recurring-action-btn edit-btn" title="Edit time">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </button>
+                            
+                            <button class="recurring-action-btn pause-btn" title="Pause">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="10" y1="15" x2="10" y2="9"></line>
+                                    <line x1="14" y1="15" x2="14" y2="9"></line>
+                                </svg>
+                            </button>
+                            
+                            <button class="recurring-action-btn delete-btn" title="Delete">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="recurring-empty-state">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    <p>No recurring tasks set up yet.</p>
+                    <span>Use the "Everyday" toggle when adding a task.</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% regroup todo_list by created_at.date as tasks_by_date %}
+    
+    {% if tasks_by_date %}
+        {% for date_group in tasks_by_date %}
+            <div class="task-list-container">
+                <div class="date-header">
+                    {{ date_group.grouper|date:"d M Y" }}
+                </div>
+                
+                <div class="task-list">
+                    {% for todo in date_group.list %}
+                        <div class="task-item {% if todo.checker %}checked{% endif %}" data-task-id="{{ todo.pk }}">
+                            <!-- Toggle Checkbox Form -->
+                            <form method="POST" action="{% url 'toggle_todo' todo.pk %}" class="toggle-form">
+                                {% csrf_token %}
+                                <label for="todo-{{ todo.pk }}">
+                                    <input
+                                        type="checkbox"
+                                        id="todo-{{ todo.pk }}"
+                                        name="checker"
+                                        onchange="this.form.submit()"
+                                        {% if todo.checker %}checked{% endif %}
+                                    >
+                                    <span class="custom-checkbox"></span>
+                                    <div class="task-content">
+                                        <span class="task-text">{{ todo.to_do }}</span>
+                                        <div class="task-meta">
+                                            <span class="task-time">{{ todo.created_at.time|date:"g:i A" }}</span>
+                                            {% if todo.todo_time.total_seconds > 0 %}
+                                                <span class="task-goal">Goal: <span id="goal-time-{{ todo.pk }}" data-seconds="{{ todo.todo_time.total_seconds }}">{{ todo.todo_time|slice:":8" }}</span></span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </label>
+                            </form>
+
+                            <!-- Circular Timer Container -->
+                            <div class="circular-timer-container">
+                                <div class="circular-timer" data-task-id="{{ todo.pk }}">
+                                    <label for="stopwatch-{{ todo.pk }}">
+                                    <div class="timer-content">
+                                        <span class="stopwatch-time" id="stopwatch-{{ todo.pk }}" data-seconds="{{ todo.timer.total_seconds }}">
+                                            {{ todo.timer|slice:":8" }}
+                                        </span>
+                                        <button class="timer-control-btn start-btn" data-task-id="{{ todo.pk }}" title="Start timer">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                            </svg>
+                                        </button>
+                                        <button class="timer-control-btn stop-btn" data-task-id="{{ todo.pk }}" style="display:none;" title="Stop timer" form="time-form-{{ todo.pk }}">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="6" y="4" width="4" height="16"></rect>
+                                                <rect x="14" y="4" width="4" height="16"></rect>
+                                            </svg>
+                                        </button>
+                                    </div></label>
+                                </div>
+                            </div>
+
+                            <!-- Hidden Time Form -->
+                            <form id="time-form-{{ todo.pk }}" class="time-form" method="POST" action="{% url 'time_spend' todo.pk %}" style="display: none;">
+                                {% csrf_token %}
+                                <input type="hidden" name="duration_in_seconds" class="duration-input">
+                            </form>
+
+                            <!-- Delete Form -->
+                            <form method="POST" action="{% url 'delete_todo' todo.pk %}" class="delete-form">
+                            {% csrf_token %}
+                            <button type="submit" aria-label="Delete task">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </form>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endfor %}
-    </div>
+    {% else %}
+        <div class="task-list-container">
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                    </svg>
+                </div>
+                <p class="empty-state-title">No tasks yet</p>
+                <p class="empty-state-subtitle">Add a task above. Try "Read book for 30 minutes"</p>
+            </div>
+        </div>
+    {% endif %}
 
 <script>
 // ============================================================
@@ -525,12 +614,71 @@ document.addEventListener('click', function(e) {
 });
 
 // ============================================================
+// RECURRING TASKS TOGGLE
+// ============================================================
+
+// Initialize collapsed state from localStorage or default to expanded on desktop, collapsed on mobile
+let isRecurringExpanded = localStorage.getItem('recurringTasksExpanded');
+if (isRecurringExpanded === null) {
+    // Default: expanded on desktop, collapsed on mobile
+    isRecurringExpanded = window.innerWidth >= 768 ? 'true' : 'false';
+} else {
+    isRecurringExpanded = isRecurringExpanded;
+}
+
+function toggleRecurringTasks() {
+    const section = document.querySelector('.recurring-tasks-section');
+    const list = document.querySelector('.recurring-tasks-list');
+    const arrow = document.querySelector('.toggle-arrow');
+    
+    if (isRecurringExpanded === 'true') {
+        // Collapse
+        section.classList.add('collapsed');
+        list.style.display = 'none';
+        arrow.style.transform = 'rotate(-90deg)';
+        isRecurringExpanded = 'false';
+    } else {
+        // Expand
+        section.classList.remove('collapsed');
+        list.style.display = 'block';
+        arrow.style.transform = 'rotate(0deg)';
+        isRecurringExpanded = 'true';
+    }
+    
+    localStorage.setItem('recurringTasksExpanded', isRecurringExpanded);
+}
+
+// ============================================================
 // INITIALIZATION
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
     updateTimeDisplay();
     formatAllTimers();
+    
+    // Set initial state for recurring tasks
+    const section = document.querySelector('.recurring-tasks-section');
+    const list = document.querySelector('.recurring-tasks-list');
+    const arrow = document.querySelector('.toggle-arrow');
+    
+    if (section && list && arrow) {
+        if (isRecurringExpanded === 'false') {
+            section.classList.add('collapsed');
+            list.style.display = 'none';
+            arrow.style.transform = 'rotate(-90deg)';
+        } else {
+            section.classList.remove('collapsed');
+            list.style.display = 'block';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+        
+        // Add click event to header
+        const header = document.getElementById('recurringTasksHeader');
+        if (header) {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', toggleRecurringTasks);
+        }
+    }
 });
 </script>
 {% endblock %}
